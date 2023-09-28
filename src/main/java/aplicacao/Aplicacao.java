@@ -3,7 +3,7 @@
  */
 
 package aplicacao;
-
+import entidade.OrdemDeServico;
 /**
  *
  * @author Usuário
@@ -11,6 +11,10 @@ package aplicacao;
 public class Aplicacao {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+      OrdemDeServico os = new OrdemDeServico();
+      os.menu();
+      System.out.println(os.local);
     }
+    
 }
+
