@@ -6,6 +6,9 @@ package entidade;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import util.CalcCombustivel;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  *
@@ -16,6 +19,10 @@ public class OrdemDeServico {
     public String moveis = "";
     public String local = "";
     public String destino = "";
+    public double kmlitro = 0; // quanto o caminhao roda por litro
+    public double preco = 0; // preço do combustivel por litro no posto
+    public double vcombust = 0.0;// valor do combustivel consumido na viagem
+    public String vfcombust = "";
     public double distancia = 0 ;
     public String tempo = "";
     public double valortotal = 0;
@@ -26,8 +33,12 @@ public class OrdemDeServico {
     //Procedimento
     public void menu(){
      
-        // Declaração de variáveis
-        List<String> itens = new ArrayList<>();
+        // Declaração de variáveis metodo menu
+        List<String> itens = new ArrayList<>(); // Lista de itens da mudança
+        CalcCombustivel conscombust = new CalcCombustivel();
+        DecimalFormat formatter = new DecimalFormat("#.###");
+        
+        
         boolean sair = true;
         int op = 0;
     
@@ -37,7 +48,7 @@ public class OrdemDeServico {
                 +"3 - Local inicial:   "+local+"\n"
                 +"4 - Destino:    "+destino+"\n"
                 +"5 - Distância:   "+distancia+" KM\n"
-                +"6 - Combustivel \n"
+                +"6 - Combustivel:  R$"+vfcombust+"\n"
                 +"7 - Tempo \n"
                 +"8 - Valor total \n"
                 +"9 - Fechar OS\n";
@@ -57,7 +68,7 @@ public class OrdemDeServico {
                     for (String item : itens) {
                         listaItens = listaItens + "\n" + item;
                     }
-                    JOptionPane.showMessageDialog(null, listaItens);
+                    JOptionPane.showMessageDialog(null, listaItens,t,1);
                     break ;
                 case 3 : 
                     System.out.println(); 
@@ -81,8 +92,14 @@ public class OrdemDeServico {
                             JOptionPane.QUESTION_MESSAGE));
                     break;
                 case 6 : 
+                    preco = Double.parseDouble(JOptionPane.showInputDialog(null,
+                            "valor do combustivel por litro", t, 3));
+                    kmlitro = Double.parseDouble(JOptionPane.showInputDialog(null,
+                            "Consumo de combustivel Km/L", t, 3));
+                    // retorna valor do combustivel por litro
+                    vcombust = distancia*conscombust.custoKm(preco, kmlitro);
+                    vfcombust = formatter.format(vcombust);
                     
-                    //combustivel();
                     break;
                 case 7 :
                     //Tempo();
