@@ -4,7 +4,7 @@
  */
 package entidade;
 import javax.swing.*;
-import java.util.Scanner;
+
 /**
  *
  * @author Usuário
@@ -13,7 +13,7 @@ public class OrdemDeServico {
     public String moveis = "";
     public String local = "";
     public String destino = "";
-    public double distancia = 0;
+    public double distancia ;
     public String tempo = "";
     public double valortotal = 0;
     
@@ -22,40 +22,58 @@ public class OrdemDeServico {
     
     //Procedimento
     public void menu(){
-        Scanner sc = new Scanner(System.in);
+     
         // Declaração de variáveis
         
         
         boolean sair = true;
         int op = 0;
-        
-        
+                
+        String t = "Ordem de Serviço";
         String itens = "";
         String add = "";
-        String menuos = "1 - Add item       2 - Local inicial\n"
-                +"3 - Destino        4 - Distância\n"
-                +"5 - Combustivel    6 - Tempo\n"
-                +"7 - Valor total    8 - Fechar OS\n";
         while (sair){
-            System.out.println(menuos);
-            op = sc.nextInt();
-            sc.nextLine();
+            String menuos = "1 - Add item\n"
+                +"2 - Local inicial:   "+local+"\n"
+                +"3 - Destino:    "+destino+"\n"
+                +"4 - Distância:   "+distancia+" KM\n"
+                +"5 - Combustivel \n"
+                +"6 - Tempo \n"
+                +"7 - Valor total \n"
+                +"8 - Fechar OS\n";
+        
+            
+            op = Integer.parseInt(JOptionPane.
+                    showInputDialog(null,
+                    menuos,
+                    t,
+                    JOptionPane.QUESTION_MESSAGE));
+            
             switch (op) {
                 case 1 : 
                     //addItem();
                     break;
                 case 2 : 
-                    System.out.println("Insira o local inicial: "); 
-                    local =  sc.nextLine();
+                    System.out.println(); 
+                    local = JOptionPane.showInputDialog(null,
+                            "Insira o local inicial: ",
+                            t,
+                            JOptionPane.QUESTION_MESSAGE);
                     break;
                 case 3 : 
-                    System.out.println("Insira o destino final: ");
-                    destino = sc.nextLine();
+                    System.out.println();
+                    destino = JOptionPane.showInputDialog(null,
+                            "Insira o destino final: ",
+                            t,
+                            JOptionPane.QUESTION_MESSAGE);
                     break;
                 case 4 :
-                    System.out.println("Insira distancia em KM: ");
-                    distancia = sc.nextDouble();
-                    sc.nextLine();
+                    
+                    distancia = Double.parseDouble(JOptionPane.
+                            showInputDialog(null,
+                            "Insira distancia em KM: ",
+                            t,
+                            JOptionPane.QUESTION_MESSAGE));
                     break;
                 case 5 : 
                     //combustivel();
@@ -73,9 +91,10 @@ public class OrdemDeServico {
                     break;
             }
         }
+
         
         
-        sc.close();
+
         
     }
     
