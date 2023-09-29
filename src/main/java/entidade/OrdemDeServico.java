@@ -13,7 +13,7 @@ public class OrdemDeServico {
     public String moveis = "";
     public String local = "";
     public String destino = "";
-    public double distancia ;
+    public double distancia = 0 ;
     public String tempo = "";
     public double valortotal = 0;
     
@@ -60,8 +60,7 @@ public class OrdemDeServico {
                             t,
                             JOptionPane.QUESTION_MESSAGE);
                     break;
-                case 3 : 
-                    System.out.println();
+                case 3 :                    
                     destino = JOptionPane.showInputDialog(null,
                             "Insira o destino final: ",
                             t,
