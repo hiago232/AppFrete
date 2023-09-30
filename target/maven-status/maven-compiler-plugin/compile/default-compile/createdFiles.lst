@@ -1,3 +1,4 @@
+entidade\OrdemDeServico.class
 aplicacao\Aplicacao.class
 util\CalcCombustivel.class
-entidade\OrdemDeServico.class
+util\CalcTempo.class

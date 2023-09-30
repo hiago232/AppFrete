@@ -6,6 +6,7 @@ package entidade;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import util.CalcTempo;
 import util.CalcCombustivel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -15,6 +16,9 @@ import java.text.NumberFormat;
  * @author Usuário
  */
 public class OrdemDeServico {
+    public String ti = "";
+    public String tf = "";
+    public String duracao = "";
     public String listaItens ="";
     public String moveis = "";
     public String local = "";
@@ -24,7 +28,6 @@ public class OrdemDeServico {
     public double vcombust = 0.0;// valor do combustivel consumido na viagem
     public String vfcombust = "";
     public double distancia = 0 ;
-    public String tempo = "";
     public double valortotal = 0;
     public String t = "Ordem de Serviço";
     // Construtor padrão
@@ -35,6 +38,7 @@ public class OrdemDeServico {
      
         // Declaração de variáveis metodo menu
         List<String> itens = new ArrayList<>(); // Lista de itens da mudança
+        CalcTempo calctemp = new CalcTempo();
         CalcCombustivel conscombust = new CalcCombustivel();
         DecimalFormat formatter = new DecimalFormat("#.###");
         
@@ -49,7 +53,7 @@ public class OrdemDeServico {
                 +"4 - Destino:    "+destino+"\n"
                 +"5 - Distância:   "+distancia+" KM\n"
                 +"6 - Combustivel:  R$"+vfcombust+"\n"
-                +"7 - Tempo \n"
+                +"7 - Tempo de serviço:   "+calctemp.toString()+"\n"
                 +"8 - Valor total \n"
                 +"9 - Fechar OS\n";
         
@@ -102,6 +106,12 @@ public class OrdemDeServico {
                     
                     break;
                 case 7 :
+                    ti = JOptionPane.showInputDialog(null
+                         , "Hora inicial: (HH:mm)", t, 3);
+                    tf = JOptionPane.showInputDialog(null
+                          ,"Hora final: (HH:mm)", t, 3);
+                     calctemp.calcDuracao(ti, tf);
+                    
                     //Tempo();
                     break;
                 case 8 :
