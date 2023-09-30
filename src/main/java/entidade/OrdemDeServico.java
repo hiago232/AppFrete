@@ -18,7 +18,7 @@ import java.text.NumberFormat;
 public class OrdemDeServico {
     public String ti = "";
     public String tf = "";
-    public String duracao = "";
+    public String duracao = "00:00";
     public String listaItens ="";
     public String moveis = "";
     public String local = "";
@@ -40,7 +40,7 @@ public class OrdemDeServico {
         List<String> itens = new ArrayList<>(); // Lista de itens da mudança
         CalcTempo calctemp = new CalcTempo();
         CalcCombustivel conscombust = new CalcCombustivel();
-        DecimalFormat formatter = new DecimalFormat("#.###");
+        DecimalFormat formatador = new DecimalFormat("#.###");
         
         
         boolean sair = true;
@@ -53,7 +53,7 @@ public class OrdemDeServico {
                 +"4 - Destino:    "+destino+"\n"
                 +"5 - Distância:   "+distancia+" KM\n"
                 +"6 - Combustivel:  R$"+vfcombust+"\n"
-                +"7 - Tempo de serviço:   "+calctemp.toString()+"\n"
+                +"7 - Tempo de serviço:   "+duracao+"\n"
                 +"8 - Valor total \n"
                 +"9 - Fechar OS\n";
         
@@ -94,6 +94,9 @@ public class OrdemDeServico {
                             "Insira distancia em KM: ",
                             t,
                             JOptionPane.QUESTION_MESSAGE));
+                    //Atualiza valor do consumo conforme a distancia
+                    vcombust = distancia * conscombust.custoKm(preco, kmlitro);
+                    vfcombust = formatador.format(vcombust);
                     break;
                 case 6 : 
                     preco = Double.parseDouble(JOptionPane.showInputDialog(null,
@@ -102,7 +105,7 @@ public class OrdemDeServico {
                             "Consumo de combustivel Km/L", t, 3));
                     // retorna valor do combustivel por litro
                     vcombust = distancia*conscombust.custoKm(preco, kmlitro);
-                    vfcombust = formatter.format(vcombust);
+                    vfcombust = formatador.format(vcombust);
                     
                     break;
                 case 7 :
@@ -110,7 +113,7 @@ public class OrdemDeServico {
                          , "Hora inicial: (HH:mm)", t, 3);
                     tf = JOptionPane.showInputDialog(null
                           ,"Hora final: (HH:mm)", t, 3);
-                     calctemp.calcDuracao(ti, tf);
+                    duracao = calctemp.calcDuracao(ti, tf);
                     
                     //Tempo();
                     break;
