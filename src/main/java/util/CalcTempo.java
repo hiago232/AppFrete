@@ -20,7 +20,7 @@ public class CalcTempo {
         LocalTime d2 = LocalTime.parse(tf,frm1);
         Duration t1 = Duration.between(d1, d2);
         //Converte os minutos em horas,soma com a hora e atribui à variavel
-        horaminuto = t1.toHoursPart() + t1.toMinutesPart() / 60;
+        horaminuto = t1.toHoursPart() +  t1.toMinutesPart() /60d;
         return String.format("%2d:%02d"
                 , t1.toHoursPart()
                 , t1.toMinutesPart());
