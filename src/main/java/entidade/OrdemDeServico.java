@@ -118,7 +118,8 @@ public class OrdemDeServico {
                     break;
                 case 6 : 
                     while(sair){
-                        op = Integer.parseInt(JOptionPane.showInputDialog(null,
+                        op = Integer.parseInt(JOptionPane
+                                .showInputDialog(null,
                                 combustmenu, t, 3));
                         switch (op){
                             case 1 :// Preço
