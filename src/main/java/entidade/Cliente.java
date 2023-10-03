@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entidade;
+import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.OrdemDeServico;
@@ -13,14 +14,28 @@ import entidade.OrdemDeServico;
  */
 public class Cliente {
     // Declaração de variáveis
+    public String t = "Cliente";
     private String nome,endereco,email;
     private int cpf = 0;
     private int cep = 0;
     private int cel = 0;
+    boolean sair = true;
     private List <OrdemDeServico> oslist; // lista de ordens de serviço
     
+    private String menu =  "1 - Abrir ordem de serviço";
+     
+    
+    
     //Contrutores
-    public Cliente (){}
+    public Cliente (){
+        List<OrdemDeServico> osl = new ArrayList<>();
+        this.oslist = osl;
+    }
+    public Cliente(String nome) {
+        List<OrdemDeServico> osl = new ArrayList<>();
+        this.oslist = osl;
+        this.nome = nome;
+    }
     public Cliente(String nome, String endereco,int cpf, int cep,int cel) {
         List<OrdemDeServico> osl = new ArrayList<>();
         this.oslist = osl;
@@ -141,6 +156,22 @@ public class Cliente {
         this.oslist = oslist;
     }
     
+    
+    public void menu (){
+        int op = 0;
+        while(sair){
+            op = Integer.parseInt(JOptionPane.
+                    showInputDialog(null,
+                     menu, t, 3));
+            switch (op) {
+                case 1:
+                    addOs();
+                    break;
+            }
+        }
+
+
+    }
     public void addOs (){
         OrdemDeServico osobj = new OrdemDeServico();
         osobj.menu();
