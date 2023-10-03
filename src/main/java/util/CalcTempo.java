@@ -3,31 +3,48 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package util;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.Duration;
+import java.time.ZoneId;
 /**
  *
  * @author Usuário
  */
 public class CalcTempo {
-    double horaminuto = 0;
+    private double horaminuto = 0;
+ 
+    public CalcTempo() {}
+
+    
     public String calcDuracao (String ti,String tf){
         
         DateTimeFormatter frm1 = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime d1 = LocalTime.parse(ti,frm1);
-        LocalTime d2 = LocalTime.parse(tf,frm1);
-        Duration t1 = Duration.between(d1, d2);
+        LocalTime t1 = LocalTime.parse(ti,frm1);
+        LocalTime t2 = LocalTime.parse(tf,frm1);
+        Duration d1 = Duration.between(t1, t2);
         //Converte os minutos em horas,soma com a hora e atribui à variavel
-        horaminuto = t1.toHoursPart() +  t1.toMinutesPart() /60d;
+        horaminuto = d1.toHoursPart() +  d1.toMinutesPart() /60d;
         return String.format("%2d:%02d"
-                , t1.toHoursPart()
-                , t1.toMinutesPart());
+                , d1.toHoursPart()
+                , d1.toMinutesPart());
         
     }
     public double calcValorHora(double valorhora){
         return valorhora*horaminuto;      
+    }
+    
+    
+    public int calcNasc(String nasc){
+        String agora = "";
+        DateTimeFormatter fm1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate t1 = LocalDate.parse(nasc, fm1);
+        LocalDate t2 = LocalDate.now(ZoneId.systemDefault());
+
+        return t2.getYear()-t1.getYear();
+    
     }
   
 }

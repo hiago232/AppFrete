@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.OrdemDeServico;
+import util.CalcTempo;
 
 /**
  *
@@ -15,7 +16,8 @@ import entidade.OrdemDeServico;
 public class Cliente {
     // Declaração de variáveis
     public String t = "Cliente";
-    private String nome,endereco,email;
+    private String nome,endereco,email,nasc;
+    private int idade = 0;
     private int cpf = 0;
     private int cep = 0;
     private int cel = 0;
@@ -31,26 +33,36 @@ public class Cliente {
         List<OrdemDeServico> osl = new ArrayList<>();
         this.oslist = osl;
     }
+    
     public Cliente(String nome) {
         List<OrdemDeServico> osl = new ArrayList<>();
         this.oslist = osl;
         this.nome = nome;
     }
-    public Cliente(String nome, String endereco,int cpf, int cep,int cel) {
+    
+    public Cliente(String nome, String endereco,String nasc,int cpf
+            ,int cep,int cel) {
         List<OrdemDeServico> osl = new ArrayList<>();
+        CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
         this.nome = nome;
         this.endereco = endereco;
+        this.nasc = nasc;
+        idade = calcidade.calcNasc(nasc);
         this.cpf = cpf;
         this.cep = cep;
         this.cel = cel;
     }
-    public Cliente (String nome,String endereco,int cpf,int cep,int cel
-            ,String email){
+    
+    public Cliente (String nome,String endereco,String nasc,int cpf
+            ,int cep,int cel ,String email){
         List <OrdemDeServico> osl = new ArrayList<>();
+        CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
         this.nome = nome;
         this.endereco = endereco;
+        this.nasc = nasc;
+        idade = calcidade.calcNasc(nasc);
         this.email = email;
         this.cpf = cpf;
         this.cep = cep;
@@ -179,7 +191,8 @@ public class Cliente {
     }
     public String toString (){
         return "Nome: "+ nome + "\n"
-                //Data de nascimento
+                +"Data de nascimento: "+nasc+"\n"
+                +"Idade: "+idade+"\n"
                 +"Endereço: "+ endereco + "\n"
                 +"CPF: "+ cpf + "\n"
                 +"CEP: "+ cep + "\n"

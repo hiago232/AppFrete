@@ -60,31 +60,37 @@ public class Aplicacao {
     public static List<Cliente> cadCliente(List<Cliente>clientelist){
          String nome , endereco, email;
          String t = "Novo Cliente";
+         String nasc = "";
          int cpf = 0;
          int cep = 0;
          int cel = 0;
          //Data de nascimento
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
-         /**
+         cpf = Integer.parseInt(JOptionPane.showInputDialog(null,
+                 "CPF: ",
+                t, 3));
+         nasc = JOptionPane.showInputDialog(null,
+                 "Data de Nascimento: ",
+                t, 3);         
+         
          endereco = JOptionPane.showInputDialog(null
                  , "Endereço: ",
                  t, 3);
+         
          email = JOptionPane.showInputDialog(null
                  , "E-mail: ",
                  t, 3);
-         cpf = Integer.parseInt(JOptionPane.showInputDialog(null
-                 , "CPF: ",
-                 t, 3));
+
          cep = Integer.parseInt(JOptionPane.showInputDialog(null
                  , "CEP: ",
                  t, 3));
          cel= Integer.parseInt(JOptionPane.showInputDialog(null
                  , "Cel: ",
                  t, 3));
-                 * */
-         //Cliente cliente = new Cliente(nome,endereco,cpf,cep,cel,email);
-         Cliente cliente = new Cliente(nome);
+             
+         Cliente cliente = new Cliente(nome,endereco,nasc,cpf,cep,cel,email);
+         
          clientelist.add(cliente);
          return clientelist;
     }
@@ -92,7 +98,7 @@ public class Aplicacao {
         String lista = "";
         for(Cliente cliente : clientelist){
             
-            lista = lista + cliente.getNome()+"\n";
+            lista = lista + cliente.toString()+"\n";
         }
         JOptionPane.showMessageDialog(null, lista);
     }

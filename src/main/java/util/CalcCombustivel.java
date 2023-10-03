@@ -12,7 +12,7 @@ public class CalcCombustivel {
     
     public CalcCombustivel(){}
     
-    public double custoKm ( double preco,double kmlitro){
+    public  double custoKm ( double preco,double kmlitro){
         return preco/kmlitro;
     }
     
