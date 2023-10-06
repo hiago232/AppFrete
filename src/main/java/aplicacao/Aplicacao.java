@@ -61,13 +61,13 @@ public class Aplicacao {
          String nome , endereco, email;
          String t = "Novo Cliente";
          String nasc = "";
-         int cpf = 0;
+         long cpf = 0;
          int cep = 0;
-         int cel = 0;
+         long cel = 0;
          //Data de nascimento
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
-         cpf = Integer.parseInt(JOptionPane.showInputDialog(null,
+         cpf = Long.parseLong(JOptionPane.showInputDialog(null,
                  "CPF: ",
                 t, 3));
          nasc = JOptionPane.showInputDialog(null,
@@ -85,7 +85,7 @@ public class Aplicacao {
          cep = Integer.parseInt(JOptionPane.showInputDialog(null
                  , "CEP: ",
                  t, 3));
-         cel= Integer.parseInt(JOptionPane.showInputDialog(null
+         cel= Long.parseLong(JOptionPane.showInputDialog(null
                  , "Cel: ",
                  t, 3));
              
@@ -96,9 +96,13 @@ public class Aplicacao {
     }
     public static void exibeClienteList(List<Cliente>clientelist){
         String lista = "";
+        int i = 0;
         for(Cliente cliente : clientelist){
             
-            lista = lista + cliente.toString()+"\n";
+            lista = lista +"Id: "+i+"  "+cliente.getNome()+" Idade: "+cliente.idade+" "
+                    +"Ordens de Serviços: "
+                    +cliente.getOslist().size()+"\n";
+            i++;
         }
         JOptionPane.showMessageDialog(null, lista);
     }

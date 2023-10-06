@@ -17,10 +17,10 @@ public class Cliente {
     // Declaração de variáveis
     public String t = "Cliente";
     private String nome,endereco,email,nasc;
-    private int idade = 0;
-    private int cpf = 0;
+    public int idade = 0;
+    private long cpf = 0;
     private int cep = 0;
-    private int cel = 0;
+    private long cel = 0;
     boolean sair = true;
     private List <OrdemDeServico> oslist; // lista de ordens de serviço
     
@@ -40,8 +40,8 @@ public class Cliente {
         this.nome = nome;
     }
     
-    public Cliente(String nome, String endereco,String nasc,int cpf
-            ,int cep,int cel) {
+    public Cliente(String nome, String endereco,String nasc,long cpf
+            ,int cep,long cel) {
         List<OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
@@ -54,8 +54,8 @@ public class Cliente {
         this.cel = cel;
     }
     
-    public Cliente (String nome,String endereco,String nasc,int cpf
-            ,int cep,int cel ,String email){
+    public Cliente (String nome,String endereco,String nasc,long cpf
+            ,int cep,long cel ,String email){
         List <OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
@@ -115,14 +115,14 @@ public class Cliente {
     /**
      * @return the cpf
      */
-    public int getCpf() {
+    public long getCpf() {
         return cpf;
     }
 
     /**
      * @param cpf the cpf to set
      */
-    public void setCpf(int cpf) {
+    public void setCpf(long cpf) {
         this.cpf = cpf;
     }
 
@@ -143,14 +143,14 @@ public class Cliente {
     /**
      * @return the cel
      */
-    public int getCel() {
+    public long getCel() {
         return cel;
     }
 
     /**
      * @param cel the cel to set
      */
-    public void setCel(int cel) {
+    public void setCel(long cel) {
         this.cel = cel;
     }
 
