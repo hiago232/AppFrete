@@ -16,16 +16,37 @@ public class Aplicacao {
     public static String t = "Tela Inicial";
 
     public static void main(String[] args) {
+        long cpf = 0;
         boolean sair = true;
         int op = 0;
         List<Cliente> clientelist = new ArrayList<>();
-        
+        List<OrdemDeServico> clienteoslist = new ArrayList<>();
         OrdemDeServico os = new OrdemDeServico();
         
         while(sair){
             op = menu();
             switch (op) {
                 case 1 :
+                    op = Integer.parseInt(JOptionPane
+                            .showInputDialog(null
+                                    ,"1 - Cliente\n 2 - Avulso\n", t
+                                    , 3));
+                    if(op == 1){
+                        cpf = Long.parseLong((JOptionPane
+                                .showInputDialog(null,
+                                         "Insira o CPF: "
+                                        , t
+                                        , 3)));
+                        cpf = temCpf(clientelist,cpf);//retorna o indice
+                        os.menu();
+                        clienteoslist=clientelist.get((int)cpf).getOslist();
+                        clienteoslist.add(os);
+                        clientelist.get((int)cpf).setOslist(clienteoslist);
+                    }else{
+                        os.menu();
+                        break;
+                    }
+                    
                     os.menu();
                     break;
                 case 2 :
@@ -106,6 +127,17 @@ public class Aplicacao {
         }
         JOptionPane.showMessageDialog(null, lista);
     }
+    public static long temCpf(List<Cliente> clientelist,long cpf){
+        long i;
+        for (i = 0; i < clientelist.size(); i++) {
+            if (clientelist.get((int) i).getCpf() == cpf) {
+                return i;
+            }
+        }
+        return -1;
+    }
+        
+   
 }
 
 
