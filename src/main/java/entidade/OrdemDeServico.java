@@ -6,6 +6,8 @@ package entidade;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import entidade.Veiculo;
+import aplicacao.Aplicacao;
 import util.CalcTempo;
 import util.CalcCombustivel;
 import java.text.DecimalFormat;
@@ -25,6 +27,7 @@ public class OrdemDeServico {
     public String moveis = "";
     public String local = "";
     public String destino = "";
+    public int veicindex = 0;
     public double vhorareal = 0;
     public double valorhora = 0;
     public double distancia = 0;
@@ -32,8 +35,12 @@ public class OrdemDeServico {
     public double kmlitro = 0; // quanto o caminhao roda por litro
     public double preco = 0; // preço do combustivel por litro no posto
     public double vcombust = 0.0;// valor do combustivel consumido na viagem
+    public List<Veiculo>veiculolist;
     // Construtor padrão
     public OrdemDeServico(){};
+    public OrdemDeServico(List<Veiculo>veiculolist){
+        this.veiculolist = veiculolist;
+    };
     
     //Procedimento
     public void menu(){
@@ -43,7 +50,8 @@ public class OrdemDeServico {
         CalcTempo calctemp = new CalcTempo();
         CalcCombustivel conscombust = new CalcCombustivel();
         DecimalFormat formatador = new DecimalFormat("#.###");
-        
+      
+       
         
         boolean sair = true;
         int op = 0;
@@ -127,11 +135,10 @@ public class OrdemDeServico {
                                         .showInputDialog(null
                                         ,"valor do combustivel por litro"
                                         ,t, 3));
+                                break;
                             case 2 : // Valor consumo
-                                kmlitro = Double.parseDouble(JOptionPane
-                                        .showInputDialog(null
-                                        ,"Consumo de combustivel Km/L"
-                                        , t, 3));
+                                veicindex = consumoVeiculoList();
+                                 kmlitro = veiculolist.get(veicindex).consumo;
                                 // retorna valor do consumo do combustivel /L
                                 vcombust = distancia * conscombust.custoKm(preco
                                         ,kmlitro);
@@ -206,6 +213,22 @@ public class OrdemDeServico {
         }
         return itens;
     
+    }
+    public int consumoVeiculoList() {
+        String lista = "";
+        int i = 0;
+        int op = 0; 
+       
+
+        for (Veiculo veic : veiculolist) {
+            lista = lista + i + " Placa: " + veic.placa + " " + veic.consumo + " Km/L";
+            i++;
+        }
+        lista = "Digite o nº do veiculo desejado: \n" + lista;
+        op = Integer.parseInt(JOptionPane.showInputDialog(null
+                , lista));
+        
+        return op;
     }
     
 }
