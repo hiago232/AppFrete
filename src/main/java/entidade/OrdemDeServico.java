@@ -187,6 +187,10 @@ public class OrdemDeServico {
                     //valorTotal();
                     break;
                 case 9 :
+                    
+                    long kilometragem = (long)distancia + veiculolist.get(veicindex)
+                            .kilometragem;
+                    veiculolist.get(veicindex).kilometragem = kilometragem;
                     sair = false;
                     break;
                 default :
