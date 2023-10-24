@@ -4,6 +4,8 @@
 
 package aplicacao;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import entidade.OrdemDeServico;
 import entidade.Cliente;
 import entidade.Veiculo;
@@ -25,7 +27,24 @@ public class aplicacao {
         List<Cliente> clientelist = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
-        Connection con = DB.getConnection();
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            conn = DB.getConnection();
+            st = conn.prepareStatement(
+                    "INSERT INTO veiculo"
+                    +"(placa,consumo)"
+                    +"VALUES"
+                    +"(?,?)");
+         st.setString(1,"abc-1234" );
+         st.setDouble(2, 10.02);
+         
+         int rowsAffected = st.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+     
         while(sair){
             op = menu();
             switch (op) {
