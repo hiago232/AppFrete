@@ -18,7 +18,7 @@ public class Cliente {
     public String t = "Cliente";
     private String nome,endereco,email,nasc;
     public int idade = 0;
-    private long cpf = 0;
+    private Long cpf_cnpj;
     private int cep = 0;
     private long cel = 0;
     boolean sair = true;
@@ -40,7 +40,7 @@ public class Cliente {
         this.nome = nome;
     }
     
-    public Cliente(String nome, String endereco,String nasc,long cpf
+    public Cliente(String nome, String endereco,String nasc,Long cpf_cnpj
             ,int cep,long cel) {
         List<OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
@@ -49,12 +49,12 @@ public class Cliente {
         this.endereco = endereco;
         this.nasc = nasc;
         idade = calcidade.calcNasc(nasc);
-        this.cpf = cpf;
+        this.cpf_cnpj = cpf_cnpj;
         this.cep = cep;
         this.cel = cel;
     }
     
-    public Cliente (String nome,String endereco,String nasc,long cpf
+    public Cliente (String nome,String endereco,String nasc,Long cpf_cnpj
             ,int cep,long cel ,String email){
         List <OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
@@ -64,7 +64,7 @@ public class Cliente {
         this.nasc = nasc;
         idade = calcidade.calcNasc(nasc);
         this.email = email;
-        this.cpf = cpf;
+        this.cpf_cnpj = cpf_cnpj;
         this.cep = cep;
         this.cel = cel;
     
@@ -113,17 +113,17 @@ public class Cliente {
     }
 
     /**
-     * @return the cpf
+     * @return the cpf_cnpj
      */
-    public long getCpf() {
-        return cpf;
+    public Long getCpf_cnpj() {
+        return cpf_cnpj;
     }
 
     /**
-     * @param cpf the cpf to set
+     * @param cpf_cnpj the cpf_cnpj to set
      */
-    public void setCpf(long cpf) {
-        this.cpf = cpf;
+    public void setCpf_cnpj(Long cpf_cnpj) {
+        this.cpf_cnpj = cpf_cnpj;
     }
 
     /**
@@ -194,7 +194,7 @@ public class Cliente {
                 +"Data de nascimento: "+nasc+"\n"
                 +"Idade: "+idade+"\n"
                 +"Endereço: "+ endereco + "\n"
-                +"CPF: "+ cpf + "\n"
+                +"CPF: "+ cpf_cnpj + "\n"
                 +"CEP: "+ cep + "\n"
                 +"Celular: "+ cel + "\n"
                 +"E-mail: "+ email + "\n";

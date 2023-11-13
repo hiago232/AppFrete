@@ -4,12 +4,14 @@
 
 package aplicacao;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import Db.DB;
 import entidade.OrdemDeServico;
 import entidade.Cliente;
 import entidade.Veiculo;
-import Db.DB;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -27,24 +29,7 @@ public class aplicacao {
         List<Cliente> clientelist = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement st = null;
-        try {
-            conn = DB.getConnection();
-            st = conn.prepareStatement(
-                    "INSERT INTO veiculo"
-                    +"(placa,consumo)"
-                    +"VALUES"
-                    +"(?,?)");
-         st.setString(1,"abc-1234" );
-         st.setDouble(2, 10.02);
-         
-         int rowsAffected = st.executeUpdate();
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-     
+
         while(sair){
             op = menu();
             switch (op) {
@@ -60,13 +45,27 @@ public class aplicacao {
                                         , t
                                         , 3)));
                         cpf = temCpf(clientelist,cpf);//retorna o indice
+                        //Instancia OS passando lista de veiculos como argumento
                         OrdemDeServico os = new OrdemDeServico(veiculolist);
                         os.menu();
+                        //Vamos manipular a lista de OS do cliente
                         List<OrdemDeServico> clienteoslist = new ArrayList<>();
+                        /** Lembrando que o indice do cliente agora esta na 
+                         * variavel cpf.
+                         * Vamos puxar a lista de OS do cliente.
+                         */
                         clienteoslist=clientelist.get((int)cpf).getOslist();
-                        clienteoslist.add(os);//atualiza lista de os do cliente
-                        oslist.add(os);//atualiza lista de os geral
+                        
+                        //atualiza lista de os
+                        clienteoslist.add(os);
+                        
+                        //atualiza Banco de lista de OS
+                        oslist.add(os);
+                        
+                        //Atualiza lista de veiculos
                         veiculolist = os.veiculolist;
+                        
+                        //Atualiza lista de OS do cliente
                         clientelist.get((int)cpf).setOslist(clienteoslist);
                         break;
                     }
@@ -79,7 +78,8 @@ public class aplicacao {
                     clientelist = cadCliente(clientelist);
                     break;
                 case 3 :
-                    exibeClienteList(clientelist);
+                    // exibeClienteList(clientelist);
+                    consultaCliente();
                     break;
                 case 4 : 
                     op = Integer.parseInt(JOptionPane.showInputDialog(null
@@ -106,12 +106,13 @@ public class aplicacao {
                         veiculolist.get(i).menu();
                         break;
                     }
-                    if (veiculolist.isEmpty()){
+                    /**if (veiculolist.isEmpty()){
                         JOptionPane.showMessageDialog(null
                                 ,"Nenhum Veículo Cadastrado!");
                         break;
-                    }
-                    exibeVeiculoList(veiculolist);
+                    }**/
+                    //exibeVeiculoList(veiculolist);
+                    consultaVeiculo();
                     break;
 
             }
@@ -132,19 +133,18 @@ public class aplicacao {
         op = Integer.parseInt(JOptionPane.showInputDialog(null
                 , menu, t, 3));
         return op;
-    }
-    
+    } 
     public static List<Cliente> cadCliente(List<Cliente>clientelist){
          String nome , endereco, email;
          String t = "Novo Cliente";
          String nasc = "";
-         long cpf = 0;
+         Long cpf_cnpj ;
          int cep = 0;
          long cel = 0;
          //Data de nascimento
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
-         cpf = Long.parseLong(JOptionPane.showInputDialog(null,
+         cpf_cnpj = Long.parseLong(JOptionPane.showInputDialog(null,
                  "CPF: ",
                 t, 3));
          nasc = JOptionPane.showInputDialog(null,
@@ -166,9 +166,31 @@ public class aplicacao {
                  , "Cel: ",
                  t, 3));
              
-         Cliente cliente = new Cliente(nome,endereco,nasc,cpf,cep,cel,email);
+         Cliente cliente = new Cliente(nome,endereco,nasc,cpf_cnpj,cep,cel,email);
+         clientelist.add(cliente); // Atualiza Lista de clientes
          
-         clientelist.add(cliente);
+         Connection conn = null;
+         PreparedStatement st = null;
+         try {
+            conn = DB.getConnection();
+            st = conn.prepareStatement(
+                    "INSERT INTO cliente"
+                    + "(nome,endereco,data_nasc,cpf_cnpj,cep,cel,email)"
+                    + "VALUES"
+                    + "(?,?,?,?,?,?,?)");
+            st.setString(1, nome);
+            st.setString(2, endereco);
+            st.setString(3, nasc);
+            st.setLong(4, cpf_cnpj); 
+            st.setLong(5, cep);
+            st.setLong(6, cel);
+            st.setString(7, email);
+
+            int rowsAffected = st.executeUpdate();
+         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+         
          return clientelist;
     }
     public static void exibeClienteList(List<Cliente>clientelist){
@@ -183,10 +205,36 @@ public class aplicacao {
         }
         JOptionPane.showMessageDialog(null, lista);
     }
+    public static void consultaCliente(){
+        String tabela = "";
+        Connection conn = null;
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            conn = DB.getConnection();
+
+            st = conn.createStatement();
+
+            rs = st.executeQuery("select * from cliente");
+            while (rs.next()) {
+                tabela = tabela + "NOME: " + rs.getString("nome") + "\n"
+                        + "CPF/CNPJ: " + rs.getLong("cpf_cnpj") + "\n"
+                        + "E-MAIL: " + rs.getString("email") + "\n"
+                        + "CEP: " + rs.getLong("cep") + "\n"
+                        + "NASCIMENTO: " + (String)rs.getString("data_nasc") + "\n"
+                        + "ENDEREÇO: " + rs.getString("endereco") + "\n"
+                        + "CELULAR: " + rs.getLong("cel") + "\n"+"\n";
+            }
+            JOptionPane.showMessageDialog(null, tabela);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public static long temCpf(List<Cliente> clientelist,long cpf){
         long i;
         for (i = 0; i < clientelist.size(); i++) {
-            if (clientelist.get((int) i).getCpf() == cpf) {
+            if (clientelist.get((int) i).getCpf_cnpj() == cpf) {
                 return i;
             }
         }
@@ -194,16 +242,34 @@ public class aplicacao {
     }
     public static Veiculo cadVeiculo (){
         String placa = "";
-        long kilometragem = 0;
+        Double kilometragem ;
         double consumo = 0;
         
         placa =  JOptionPane.showInputDialog(null
                 , "Digite a Placa do Veiculo Abaixo:");
-        kilometragem = Long.parseLong(JOptionPane.showInputDialog(null
+        kilometragem = Double.parseDouble(JOptionPane.showInputDialog(null
                 , "Digite a Kilometragem Abaixo:"));
         consumo = Double.parseDouble(JOptionPane.showInputDialog(null
                 , "Digite o Consumo de Combustivel do Veiculo Abaixo: (Km/L)"));
         Veiculo veiculo = new Veiculo(placa,kilometragem,consumo);
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            conn = DB.getConnection();
+            st = conn.prepareStatement(
+                    "INSERT INTO veiculo"
+                    + "(placa,kilometragem,consumo)"
+                    + "VALUES"
+                    + "(?,?,?)");
+            st.setString(1, placa);
+            st.setDouble(2, kilometragem);
+            st.setDouble(3, consumo);
+
+            int rowsAffected = st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DB.closeConnection();
         return veiculo;
     }
     public static int temPlaca (List<Veiculo> veiculolist){
@@ -229,6 +295,28 @@ public class aplicacao {
             i++;
         }
         JOptionPane.showMessageDialog(null, lista);
+    }
+    public static void consultaVeiculo(){
+        String tabela = "";
+        Connection conn = null;
+        Statement st = null;
+        ResultSet rs  = null;
+        try {
+            conn = DB.getConnection();
+            
+            st = conn.createStatement();
+            
+            rs = st.executeQuery("select * from veiculo");
+            while (rs.next()){
+                tabela = tabela+"Placa: "+rs.getString("placa")+"| "
+                        +"Kilometragem: "+rs.getDouble("kilometragem")+"| "
+                        +"Consumo: "+rs.getDouble("consumo")+"\n";
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        JOptionPane.showMessageDialog(null, tabela);
     }
         
    

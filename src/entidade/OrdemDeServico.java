@@ -3,10 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entidade;
+import Db.DB;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.Veiculo;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import util.CalcTempo;
 import util.CalcCombustivel;
@@ -25,7 +29,7 @@ public class OrdemDeServico {
     public String duracao = "00:00";
     public String listaItens ="";
     public String moveis = "";
-    public String local = "";
+    public String inicio = "";
     public String destino = "";
     public int veicindex = 0;
     public double vhorareal = 0;
@@ -58,10 +62,10 @@ public class OrdemDeServico {
     
         while (sair){
             // Atribui o valor total a cada repetição
-            valortotal = vcombust + valorhora;
+            valortotal = 10.00;// vcombust + valorhora; 
             String osmenu = "1 - Add item\n"
                 +"2 - Exibir lista\n"
-                +"3 - Local inicial:   "+local+"\n"
+                +"3 - Local inicial:   "+inicio+"\n"
                 +"4 - Destino:    "+destino+"\n"
                 +"5 - Distância:   "+distancia+" KM\n"
                 +"6 - Combustivel:  R$"+vfcombust+"\n"
@@ -102,7 +106,7 @@ public class OrdemDeServico {
                     break ;
                 case 3 : 
                     System.out.println(); 
-                    local = JOptionPane.showInputDialog(null,
+                    inicio = JOptionPane.showInputDialog(null,
                             "Insira o local inicial: ",
                             t,
                             JOptionPane.QUESTION_MESSAGE);
@@ -138,8 +142,10 @@ public class OrdemDeServico {
                                 break;
                             case 2 : // Valor consumo
                                 veicindex = consumoVeiculoList();
-                                 kmlitro = veiculolist.get(veicindex).consumo;
-                                // retorna valor do consumo do combustivel /L
+                                 kmlitro = veiculolist.get(veicindex)
+                                         .consumo;
+                                 
+                                // retorna valor por kilometro do consumo 
                                 vcombust = distancia * conscombust.custoKm(preco
                                         ,kmlitro);
                                 vfcombust = formatador.format(vcombust);
@@ -188,9 +194,46 @@ public class OrdemDeServico {
                     break;
                 case 9 :
                     
-                    long kilometragem = (long)distancia + veiculolist.get(veicindex)
+                    /**
+                    Double kilometragem = (long)distancia + veiculolist.get(veicindex)
                             .kilometragem;
+                    
+                    // Atualiza a kilometragem do veiculo utilizado no serviço
                     veiculolist.get(veicindex).kilometragem = kilometragem;
+                    **/
+                    
+                    //Reorganiza listaItens com ',' 
+                    listaItens = "";
+                    for (String item : itens) {
+                        listaItens = listaItens + item + ",";
+                    }
+                    
+                    Connection conn = null;
+                    PreparedStatement st = null;
+                    try {
+                        conn = DB.getConnection();
+                        st = conn.prepareStatement(
+                                "INSERT INTO ordem_servico"
+                                + "(lista_itens,inicio,destino,distancia"
+                                        + ",combustivel$,tempo_servico"
+                                        +",valor_hora,valor_total)"
+                                + "VALUES"
+                                + "(?,?,?,?,?,?,?,?)");
+                        st.setString(1, listaItens);
+                        st.setString(2, inicio);
+                        st.setString(3, destino);
+                        st.setDouble(4, distancia);
+                        st.setString(5, vfcombust);
+                        st.setString(6, duracao);
+                        st.setDouble(7, valorhora);
+                        st.setDouble(8, valortotal);
+
+                        int rowsAffected = st.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    
+                    
                     sair = false;
                     break;
                 default :
