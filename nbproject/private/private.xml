@@ -5,12 +5,10 @@
         <group>
             <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/Db/DB.java</file>
             <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/util/CalcCombustivel.java</file>
+            <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/util/CalcTempo.java</file>
             <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/aplicacao/aplicacao.java</file>
-            <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/entidade/Veiculo.java</file>
             <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/Db/DbException.java</file>
-            <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/entidade/Cliente.java</file>
             <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/entidade/OrdemDeServico.java</file>
-            <file>file:/C:/Users/Usuário/Documents/NetBeansProjects/AppFrete/src/Db/db.properties</file>
         </group>
     </open-files>
 </project-private>

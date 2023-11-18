@@ -12,9 +12,11 @@ import Db.DB;
 import entidade.OrdemDeServico;
 import entidade.Cliente;
 import entidade.Veiculo;
+import java.awt.Dimension;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Formatter;
 /**
  *
  * @author Usuário
@@ -45,6 +47,7 @@ public class aplicacao {
                                         , t
                                         , 3)));
                         cpf = temCpf(clientelist,cpf);//retorna o indice
+                        if (cpf == -1 ){break;}
                         //Instancia OS passando lista de veiculos como argumento
                         OrdemDeServico os = new OrdemDeServico(veiculolist);
                         os.menu();
@@ -181,7 +184,11 @@ public class aplicacao {
             st.setString(1, nome);
             st.setString(2, endereco);
             st.setString(3, nasc);
-            st.setLong(4, cpf_cnpj); 
+            
+            String string_cpf_cnpj = "";
+            string_cpf_cnpj = string_cpf_cnpj + cpf_cnpj;
+            st.setString(4, string_cpf_cnpj); 
+            
             st.setLong(5, cep);
             st.setLong(6, cel);
             st.setString(7, email);
@@ -190,7 +197,9 @@ public class aplicacao {
          } catch (SQLException e) {
             e.printStackTrace();
         }
-         
+         finally{
+        DB.closeStatement(st);  
+         }
          return clientelist;
     }
     public static void exibeClienteList(List<Cliente>clientelist){
@@ -207,6 +216,7 @@ public class aplicacao {
     }
     public static void consultaCliente(){
         String tabela = "";
+        String cpf_cnpj = "";
         Connection conn = null;
         Statement st = null;
         ResultSet rs = null;
@@ -214,21 +224,36 @@ public class aplicacao {
             conn = DB.getConnection();
 
             st = conn.createStatement();
+            
 
             rs = st.executeQuery("select * from cliente");
             while (rs.next()) {
+                if (rs.getString("cpf_cnpj").length() < 11){
+                    cpf_cnpj = "0"+rs.getString("cpf_cnpj");
+                }
                 tabela = tabela + "NOME: " + rs.getString("nome") + "\n"
-                        + "CPF/CNPJ: " + rs.getLong("cpf_cnpj") + "\n"
+                        + "CPF/CNPJ: " + cpf_cnpj + "\n"
                         + "E-MAIL: " + rs.getString("email") + "\n"
                         + "CEP: " + rs.getLong("cep") + "\n"
                         + "NASCIMENTO: " + (String)rs.getString("data_nasc") + "\n"
                         + "ENDEREÇO: " + rs.getString("endereco") + "\n"
                         + "CELULAR: " + rs.getLong("cel") + "\n"+"\n";
-            }
-            JOptionPane.showMessageDialog(null, tabela);
-        }
-        catch (SQLException e) {
+            } 
+            
+            JTextArea clientestxt = new JTextArea(tabela);
+                clientestxt.setLineWrap(true);
+                clientestxt.setWrapStyleWord(true);
+                clientestxt.setEditable(false);
+            JScrollPane listclientes = new JScrollPane(clientestxt);
+                listclientes.setPreferredSize(new Dimension(500, 500));
+            JOptionPane.showMessageDialog(null, listclientes,
+                    "Lista de Clientes", 3);
+        }catch (SQLException e) {
             e.printStackTrace();
+        }
+        finally{
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
         }
     }
     public static long temCpf(List<Cliente> clientelist,long cpf){
@@ -308,15 +333,21 @@ public class aplicacao {
             
             rs = st.executeQuery("select * from veiculo");
             while (rs.next()){
-                tabela = tabela+"Placa: "+rs.getString("placa")+"| "
-                        +"Kilometragem: "+rs.getDouble("kilometragem")+"| "
-                        +"Consumo: "+rs.getDouble("consumo")+"\n";
+                tabela = tabela+"Placa: "+rs.getString("placa")+"\n"
+                        +"Kilometragem: "+rs.getDouble("kilometragem")+"\n"
+                        +"Consumo: "+rs.getDouble("consumo")+"\n"+"\n";
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
-        JOptionPane.showMessageDialog(null, tabela);
+        JTextArea veiculotxt = new JTextArea(tabela);
+        veiculotxt.setLineWrap(true);
+        veiculotxt.setWrapStyleWord(true);
+        veiculotxt.setEditable(false);
+        JScrollPane listveiculo = new JScrollPane(veiculotxt);
+        listveiculo.setPreferredSize(new Dimension(300, 300));
+        JOptionPane.showMessageDialog(null, listveiculo);
     }
         
    
