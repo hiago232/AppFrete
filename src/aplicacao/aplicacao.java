@@ -3,6 +3,7 @@
  */
 
 package aplicacao;
+import DAO.ClienteDao;
 import DAO.DaoFactory;
 import DAO.VeiculoDao;
 import java.sql.Connection;
@@ -27,13 +28,23 @@ public class aplicacao {
     public static String t = "Tela Inicial";
     
     public static void main(String[] args) {
-        long cpf = 0;
+        String cpf = "";
         boolean sair = true;
         int op = 0;
         String placa = "";
         List<Cliente> clientelist = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
+        
+        // Importa Lista Cliente do MySql
+
+        ClienteDao clienteDao = DaoFactory.criaClienteDao();
+        clientelist = clienteDao.findAll();
+
+        
+        // Importa Lista Veiculo do MySql
+        VeiculoDao veiculoDao = DaoFactory.criaVeiculoDao();
+        veiculolist = veiculoDao.findAll();
 
         while(sair){
             op = menu();
@@ -44,13 +55,13 @@ public class aplicacao {
                                     ,"1 - Cliente\n 2 - Avulso\n", t
                                     , 3));
                     if(op == 1){
-                        cpf = Long.parseLong((JOptionPane
+                        cpf = JOptionPane
                                 .showInputDialog(null,
                                          "Insira o CPF: "
                                         , t
-                                        , 3)));
-                        cpf = temCpf(clientelist,cpf);//retorna o indice
-                        if (cpf == -1 ){break;}
+                                        , 3);
+                        int index = temCpf(clientelist,cpf);//retorna o indice
+                        if (index == -1 ){break;}
                         //Instancia OS passando lista de veiculos como argumento
                         OrdemDeServico os = new OrdemDeServico(veiculolist);
                         os.menu();
@@ -60,7 +71,7 @@ public class aplicacao {
                          * variavel cpf.
                          * Vamos puxar a lista de OS do cliente.
                          */
-                        clienteoslist=clientelist.get((int)cpf).getOslist();
+                        clienteoslist=clientelist.get(index).getOslist();
                         
                         //atualiza lista de os
                         clienteoslist.add(os);
@@ -72,7 +83,7 @@ public class aplicacao {
                         veiculolist = os.veiculolist;
                         
                         //Atualiza lista de OS do cliente
-                        clientelist.get((int)cpf).setOslist(clienteoslist);
+                        clientelist.get(index).setOslist(clienteoslist);
                         break;
                     }
                         OrdemDeServico os = new OrdemDeServico(veiculolist);
@@ -84,8 +95,8 @@ public class aplicacao {
                     clientelist = cadCliente(clientelist);
                     break;
                 case 3 :
-                    // exibeClienteList(clientelist);
-                    consultaCliente();
+                    exibeClienteList(clientelist);
+                    
                     break;
                 case 4 : 
                     op = Integer.parseInt(JOptionPane.showInputDialog(null
@@ -94,35 +105,18 @@ public class aplicacao {
                                     + "3 - Exibir Lista de Veículos\n"
                             , t, 3));
                     if(op == 1){
-                        veiculolist.add(cadVeiculo());
+                        veiculolist.add(cadVeiculo());//Implementar codigo para atualizar veiculos apos cadastro
                         break;
                     }
                     if (op == 2){
-                        
-                        placa = JOptionPane.showInputDialog(
-                                "Nº da Placa: ");
-                        
-                        VeiculoDao veiculoDao = DaoFactory.criaVeiculoDao();
-                        
-                        Veiculo veiculo = veiculoDao.findByPlaca(placa);
-                        
-                        JTextArea veiculotxt = new JTextArea(veiculo.toString());
-                        veiculotxt.setLineWrap(true);
-                        veiculotxt.setWrapStyleWord(true);
-                        veiculotxt.setEditable(false);
-                        JScrollPane listclientes = new JScrollPane(veiculotxt);
-                        listclientes.setPreferredSize(new Dimension(200, 300));
-                        JOptionPane.showMessageDialog(null, listclientes,
-                                "Veiculo", 3);
-                        break;
-                        /*
                         if (veiculolist.isEmpty()) {
                             JOptionPane.showMessageDialog(null,
-                                     "Nenhum Veículo Cadastrado!");
-                          
-                        break;
-                        }
-                        int i = temPlaca(veiculolist);
+                                    "Nenhum Veículo Cadastrado!");
+
+                            break;}
+
+                        
+                        int i = temPlaca(veiculolist,veiculoDao);
                         if (i == -1) {
                             JOptionPane.showMessageDialog(null,
                                     "Veículo Não Encontrado!");
@@ -130,15 +124,18 @@ public class aplicacao {
                         }
                         veiculolist.get(i).menu();
                         break;
-                        */
+                       
                     }
                     /**if (veiculolist.isEmpty()){
                         JOptionPane.showMessageDialog(null
                                 ,"Nenhum Veículo Cadastrado!");
                         break;
                     }**/
-                    //exibeVeiculoList(veiculolist);
-                    consultaVeiculo();
+                    
+
+                    exibeVeiculoList(veiculolist);
+
+                    //consultaVeiculo();
                     break;
 
             }
@@ -164,15 +161,15 @@ public class aplicacao {
          String nome , endereco, email;
          String t = "Novo Cliente";
          String nasc = "";
-         Long cpf_cnpj ;
+         String cpf_cnpj ;
          int cep = 0;
          long cel = 0;
          //Data de nascimento
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
-         cpf_cnpj = Long.parseLong(JOptionPane.showInputDialog(null,
+         cpf_cnpj = JOptionPane.showInputDialog(null,
                  "CPF: ",
-                t, 3));
+                t, 3);
          nasc = JOptionPane.showInputDialog(null,
                  "Data de Nascimento: ",
                 t, 3);         
@@ -227,62 +224,28 @@ public class aplicacao {
     }
     public static void exibeClienteList(List<Cliente>clientelist){
         String lista = "";
-        int i = 0;
+        
         for(Cliente cliente : clientelist){
             
-            lista = lista +"Id: "+i+"  "+cliente.getNome()+" Idade: "+cliente.idade+" "
-                    +"Ordens de Serviços: "
-                    +cliente.getOslist().size()+"\n";
-            i++;
+            lista = lista +  cliente.toString();
         }
-        JOptionPane.showMessageDialog(null, lista);
-    }
-    public static void consultaCliente(){
-        String tabela = "";
-        String cpf_cnpj = "";
-        Connection conn = null;
-        Statement st = null;
-        ResultSet rs = null;
-        try {
-            conn = DB.getConnection();
+        
+        JTextArea clientetxt = new JTextArea(lista);
+        clientetxt.setLineWrap(true);
+        clientetxt.setWrapStyleWord(true);
+        clientetxt.setEditable(false);
+        JScrollPane clientelistxt = new JScrollPane(clientetxt);
+        clientelistxt.setPreferredSize(new Dimension(300, 300));
+        
+        JOptionPane.showMessageDialog(null, clientelistxt);
 
-            st = conn.createStatement();
-            
+        
 
-            rs = st.executeQuery("select * from cliente");
-            while (rs.next()) {
-                if (rs.getString("cpf_cnpj").length() < 11){
-                    cpf_cnpj = "0"+rs.getString("cpf_cnpj");
-                }
-                tabela = tabela + "NOME: " + rs.getString("nome") + "\n"
-                        + "CPF/CNPJ: " + cpf_cnpj + "\n"
-                        + "E-MAIL: " + rs.getString("email") + "\n"
-                        + "CEP: " + rs.getLong("cep") + "\n"
-                        + "NASCIMENTO: " + (String)rs.getString("data_nasc") + "\n"
-                        + "ENDEREÇO: " + rs.getString("endereco") + "\n"
-                        + "CELULAR: " + rs.getLong("cel") + "\n"+"\n";
-            } 
-            
-            JTextArea clientestxt = new JTextArea(tabela);
-                clientestxt.setLineWrap(true);
-                clientestxt.setWrapStyleWord(true);
-                clientestxt.setEditable(false);
-            JScrollPane listclientes = new JScrollPane(clientestxt);
-                listclientes.setPreferredSize(new Dimension(500, 500));
-            JOptionPane.showMessageDialog(null, listclientes,
-                    "Lista de Clientes", 3);
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally{
-            DB.closeStatement(st);
-            DB.closeResultSet(rs);
-        }
     }
-    public static long temCpf(List<Cliente> clientelist,long cpf){
-        long i;
+    public static int temCpf(List<Cliente> clientelist,String cpf){
+        int i = 0;
         for (i = 0; i < clientelist.size(); i++) {
-            if (clientelist.get((int) i).getCpf_cnpj() == cpf) {
+            if (clientelist.get((int) i).equals(cpf)) {
                 return i;
             }
         }
@@ -320,58 +283,49 @@ public class aplicacao {
         DB.closeConnection();
         return veiculo;
     }
-    public static int temPlaca (List<Veiculo> veiculolist){
+    public static int temPlaca (List<Veiculo> veiculolist, VeiculoDao veiculoDao){
         String placa =  "";
         int i = 0;
         
-        placa = JOptionPane.showInputDialog(null
-                , "Digite a Placa do Veiculo Abaixo:");
-        for (i = 0; i < veiculolist.size(); i++) {
-            if (veiculolist.get( i).getPlaca().equals(placa)) {
-                
+        placa = JOptionPane.showInputDialog(
+                "Nº da Placa: ");
+
+        Veiculo veiculo = veiculoDao.findByPlaca(placa);
+        if (veiculo != null){
+
+        JTextArea veiculotxt = new JTextArea(veiculo.toString());
+        veiculotxt.setLineWrap(true);
+        veiculotxt.setWrapStyleWord(true);
+        veiculotxt.setEditable(false);
+        JScrollPane veiculoScroll = new JScrollPane(veiculotxt);
+        veiculoScroll.setPreferredSize(new Dimension(200, 300));
+        JOptionPane.showMessageDialog(null, veiculoScroll,
+                "Veiculo", 3);
+        
+        for (Veiculo vv : veiculolist){
+            if(vv.getPlaca().equalsIgnoreCase(placa)){
                 return i;
             }
+            i++;
+        }
         }
         return -1;
     }
     public static void exibeVeiculoList(List<Veiculo>veiculolist){
         String lista = "";
-        int i = 0;
-        
-        for (Veiculo veic : veiculolist) {
-            lista = lista + i +" Placa: "+veic.getPlaca()+" "+veic.getKilometragem()+" Km";
-            i++;
+
+
+        for (Veiculo veiculo : veiculolist) {
+            lista += veiculo.toString();
         }
-        JOptionPane.showMessageDialog(null, lista);
-    }
-    public static void consultaVeiculo(){
-        String tabela = "";
-        Connection conn = null;
-        Statement st = null;
-        ResultSet rs  = null;
-        try {
-            conn = DB.getConnection();
-            
-            st = conn.createStatement();
-            
-            rs = st.executeQuery("select * from veiculo");
-            while (rs.next()){
-                tabela = tabela+"Placa: "+rs.getString("placa")+"\n"
-                        +"Kilometragem: "+rs.getDouble("kilometragem")+"\n"
-                        +"Consumo: "+rs.getDouble("consumo")+"\n"+"\n";
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        JTextArea veiculotxt = new JTextArea(tabela);
+        JTextArea veiculotxt = new JTextArea(lista);
         veiculotxt.setLineWrap(true);
         veiculotxt.setWrapStyleWord(true);
         veiculotxt.setEditable(false);
-        JScrollPane listveiculo = new JScrollPane(veiculotxt);
-        listveiculo.setPreferredSize(new Dimension(300, 300));
-        JOptionPane.showMessageDialog(null, listveiculo);
+        JScrollPane veiculolistxt = new JScrollPane(veiculotxt);
+        veiculolistxt.setPreferredSize(new Dimension(300, 300));
+
+        JOptionPane.showMessageDialog(null, veiculolistxt);
     }
-        
-   
+    
 }

@@ -20,8 +20,8 @@ public class Cliente implements Serializable {
     public String t = "Cliente";
     private String nome,endereco,email,nasc;
     public int idade = 0;
-    private Long cpf_cnpj;
-    private int cep = 0;
+    private String cpf_cnpj= "";
+    private long cep = 0;
     private long cel = 0;
     boolean sair = true;
     private List <OrdemDeServico> oslist; // lista de ordens de serviço
@@ -42,8 +42,8 @@ public class Cliente implements Serializable {
         this.nome = nome;
     }
     
-    public Cliente(String nome, String endereco,String nasc,Long cpf_cnpj
-            ,int cep,long cel) {
+    public Cliente(String nome, String endereco,String nasc,String cpf_cnpj
+            ,long cep,long cel) {
         List<OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
@@ -56,8 +56,8 @@ public class Cliente implements Serializable {
         this.cel = cel;
     }
     
-    public Cliente (String nome,String endereco,String nasc,Long cpf_cnpj
-            ,int cep,long cel ,String email){
+    public Cliente (String nome,String endereco,String nasc,String cpf_cnpj
+            ,long cep,long cel ,String email){
         List <OrdemDeServico> osl = new ArrayList<>();
         CalcTempo calcidade = new CalcTempo();
         this.oslist = osl;
@@ -117,28 +117,28 @@ public class Cliente implements Serializable {
     /**
      * @return the cpf_cnpj
      */
-    public Long getCpf_cnpj() {
+    public String getCpf_cnpj() {
         return cpf_cnpj;
     }
 
     /**
      * @param cpf_cnpj the cpf_cnpj to set
      */
-    public void setCpf_cnpj(Long cpf_cnpj) {
+    public void setCpf_cnpj(String cpf_cnpj) {
         this.cpf_cnpj = cpf_cnpj;
     }
 
     /**
      * @return the cep
      */
-    public int getCep() {
+    public long getCep() {
         return cep;
     }
 
     /**
      * @param cep the cep to set
      */
-    public void setCep(int cep) {
+    public void setCep(long cep) {
         this.cep = cep;
     }
 
@@ -154,6 +154,12 @@ public class Cliente implements Serializable {
      */
     public void setCel(long cel) {
         this.cel = cel;
+    }
+    public String getNasc(){
+        return nasc;
+    }
+    public void setNasc(String nasc){
+        this.nasc = nasc;
     }
 
     /**
@@ -220,14 +226,16 @@ public class Cliente implements Serializable {
         oslist.add(osobj);
     }
     public String toString (){
-        return "Nome: "+ nome + "\n"
+        return "----------------" + "\n"
+                +"Nome: "+ nome + "\n"
                 +"Data de nascimento: "+nasc+"\n"
                 +"Idade: "+idade+"\n"
                 +"Endereço: "+ endereco + "\n"
                 +"CPF: "+ cpf_cnpj + "\n"
                 +"CEP: "+ cep + "\n"
                 +"Celular: "+ cel + "\n"
-                +"E-mail: "+ email + "\n";
+                +"E-mail: "+ email + "\n"
+                +"----------------" + "\n";
 
                 }
     

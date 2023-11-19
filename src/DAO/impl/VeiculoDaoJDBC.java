@@ -7,8 +7,10 @@ import entidade.Veiculo;
 import java.sql.Connection;
 import java.util.List;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 
@@ -55,12 +57,7 @@ public class VeiculoDaoJDBC implements VeiculoDao{
             st.setString(1, Placa);
             rs = st.executeQuery();
             if (rs.next()){
-                Veiculo veiculo = new Veiculo();
-                veiculo.setPlaca(rs.getString("placa"));
-                veiculo.setKilometragem(rs.getDouble("kilometragem"));
-                veiculo.setConsumo(rs.getDouble("consumo"));
-                
-                
+                Veiculo veiculo = instanciaVeiculo(rs);;
                 return veiculo;
             }
             return null;
@@ -76,9 +73,34 @@ public class VeiculoDaoJDBC implements VeiculoDao{
 
     @Override
     public List<Veiculo> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+        List<Veiculo> veiculos = new ArrayList<>();
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            st = conn.createStatement();
 
-    
+            rs = st.executeQuery("select * from veiculo");
+
+            while (rs.next()) {
+                Veiculo veiculo = instanciaVeiculo(rs);
+                veiculos.add(veiculo);
+            }
+            return veiculos;
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
+
+    private Veiculo instanciaVeiculo(ResultSet rs) throws SQLException  {
+        Veiculo veiculo =new Veiculo();
+        veiculo.setPlaca(rs.getString("placa"));
+        veiculo.setKilometragem(rs.getDouble("kilometragem"));
+        veiculo.setConsumo(rs.getDouble("consumo"));
+        return veiculo;
+    }
 }
+
+

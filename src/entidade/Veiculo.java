@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import Db.DB;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Usuário
@@ -77,13 +78,16 @@ public class Veiculo implements Serializable{
         String menu = "1 - Placa: "+ placa+"\n"
                 +"2 - Kilometragem: "+ kilometragem+"\n"
                 +"3 - Consumo: "+ consumo+"\n";
+        JOptionPane.showInputDialog(menu);
         
     }
     
     public String toString(){
-         return "1 - Placa: " + placa + "\n"
+         return "----------------"+"\n"
+                +"1 - Placa: " + placa + "\n"
                 + "2 - Kilometragem: " + String.format("%.3f", kilometragem) + "\n"
-                + "3 - Consumo: " + String.format("%.2f", consumo) + "\n";
+                + "3 - Consumo: " + String.format("%.2f", consumo) + "\n"
+                +"----------------"+"\n";
     }
     
 }
