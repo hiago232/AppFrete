@@ -7,13 +7,15 @@ import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.OrdemDeServico;
+import java.io.Serializable;
+import java.util.Objects;
 import util.CalcTempo;
 
 /**
  *
  * @author Usuário
  */
-public class Cliente {
+public class Cliente implements Serializable {
     // Declaração de variáveis
     public String t = "Cliente";
     private String nome,endereco,email,nasc;
@@ -167,6 +169,29 @@ public class Cliente {
     public void setOslist(List <OrdemDeServico> oslist) {
         this.oslist = oslist;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this.cpf_cnpj);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cliente other = (Cliente) obj;
+        return Objects.equals(this.cpf_cnpj, other.cpf_cnpj);
+    }
+    
     
     
     public void menu (){
@@ -184,6 +209,11 @@ public class Cliente {
 
 
     }
+    
+    
+    
+    
+    // Este metodo ainda não possui utilidade
     public void addOs (){
         OrdemDeServico osobj = new OrdemDeServico();
         osobj.menu();

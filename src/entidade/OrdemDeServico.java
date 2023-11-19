@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.Veiculo;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,12 +17,13 @@ import util.CalcTempo;
 import util.CalcCombustivel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Objects;
 
 /**
  *
  * @author Usuário
  */
-public class OrdemDeServico {
+public class OrdemDeServico implements Serializable{
     public String vfcombust = "";
     public String t = "Ordem de Serviço";
     public String ti = "";
@@ -31,6 +33,7 @@ public class OrdemDeServico {
     public String moveis = "";
     public String inicio = "";
     public String destino = "";
+    public Integer id;
     public int veicindex = 0;
     public double vhorareal = 0;
     public double valorhora = 0;
@@ -45,6 +48,30 @@ public class OrdemDeServico {
     public OrdemDeServico(List<Veiculo>veiculolist){
         this.veiculolist = veiculolist;
     };
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final OrdemDeServico other = (OrdemDeServico) obj;
+        return Objects.equals(this.id, other.id);
+    }
+    
+    
     
     //Procedimento
     public void menu(){
@@ -143,7 +170,7 @@ public class OrdemDeServico {
                             case 2 : // Valor consumo
                                 veicindex = consumoVeiculoList();
                                  kmlitro = veiculolist.get(veicindex)
-                                         .consumo;
+                                         .getConsumo();
                                  
                                 // retorna valor por kilometro do consumo 
                                 vcombust = distancia * conscombust.custoKm(preco
@@ -268,7 +295,7 @@ public class OrdemDeServico {
        
 
         for (Veiculo veic : veiculolist) {
-            lista = lista + i + " Placa: " + veic.placa + " " + veic.consumo + " Km/L";
+            lista = lista + i + " Placa: " + veic.getPlaca() + " " + veic.getConsumo() + " Km/L";
             i++;
         }
         lista = "Digite o nº do veiculo desejado: \n" + lista;

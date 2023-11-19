@@ -3,6 +3,8 @@
  */
 
 package aplicacao;
+import DAO.DaoFactory;
+import DAO.VeiculoDao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -28,6 +30,7 @@ public class aplicacao {
         long cpf = 0;
         boolean sair = true;
         int op = 0;
+        String placa = "";
         List<Cliente> clientelist = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
@@ -94,11 +97,30 @@ public class aplicacao {
                         veiculolist.add(cadVeiculo());
                         break;
                     }
-                    if (op == 2){    
+                    if (op == 2){
+                        
+                        placa = JOptionPane.showInputDialog(
+                                "Nº da Placa: ");
+                        
+                        VeiculoDao veiculoDao = DaoFactory.criaVeiculoDao();
+                        
+                        Veiculo veiculo = veiculoDao.findByPlaca(placa);
+                        
+                        JTextArea veiculotxt = new JTextArea(veiculo.toString());
+                        veiculotxt.setLineWrap(true);
+                        veiculotxt.setWrapStyleWord(true);
+                        veiculotxt.setEditable(false);
+                        JScrollPane listclientes = new JScrollPane(veiculotxt);
+                        listclientes.setPreferredSize(new Dimension(200, 300));
+                        JOptionPane.showMessageDialog(null, listclientes,
+                                "Veiculo", 3);
+                        break;
+                        /*
                         if (veiculolist.isEmpty()) {
                             JOptionPane.showMessageDialog(null,
                                      "Nenhum Veículo Cadastrado!");
-                            break;
+                          
+                        break;
                         }
                         int i = temPlaca(veiculolist);
                         if (i == -1) {
@@ -108,6 +130,7 @@ public class aplicacao {
                         }
                         veiculolist.get(i).menu();
                         break;
+                        */
                     }
                     /**if (veiculolist.isEmpty()){
                         JOptionPane.showMessageDialog(null
@@ -304,7 +327,7 @@ public class aplicacao {
         placa = JOptionPane.showInputDialog(null
                 , "Digite a Placa do Veiculo Abaixo:");
         for (i = 0; i < veiculolist.size(); i++) {
-            if (veiculolist.get( i).placa.equals(placa)) {
+            if (veiculolist.get( i).getPlaca().equals(placa)) {
                 
                 return i;
             }
@@ -316,7 +339,7 @@ public class aplicacao {
         int i = 0;
         
         for (Veiculo veic : veiculolist) {
-            lista = lista + i +" Placa: "+veic.placa+" "+veic.kilometragem+" Km";
+            lista = lista + i +" Placa: "+veic.getPlaca()+" "+veic.getKilometragem()+" Km";
             i++;
         }
         JOptionPane.showMessageDialog(null, lista);
