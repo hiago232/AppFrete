@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
 import entidade.Veiculo;
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,30 +25,141 @@ import java.util.Objects;
  * @author Usuário
  */
 public class OrdemDeServico implements Serializable{
-    public String vfcombust = "";
-    public String t = "Ordem de Serviço";
-    public String ti = "";
-    public String tf = "";
-    public String duracao = "00:00";
-    public String listaItens ="";
-    public String moveis = "";
-    public String inicio = "";
-    public String destino = "";
-    public Integer id;
-    public int veicindex = 0;
-    public double vhorareal = 0;
-    public double valorhora = 0;
-    public double distancia = 0;
-    public double valortotal = 0;
-    public double kmlitro = 0; // quanto o caminhao roda por litro
-    public double preco = 0; // preço do combustivel por litro no posto
-    public double vcombust = 0.0;// valor do combustivel consumido na viagem
-    public List<Veiculo>veiculolist;
+    private String cpf_cnpj= "";
+    private String nome = "";
+    private String placa = "";
+    private String vfcombust = "";
+    private String t = "Ordem de Serviço";
+    private String ti = "";
+    private String tf = "";
+    private String duracao = "00:00";
+    private String listaItens ="";
+    private String moveis = "";
+    private String inicio = "";
+    private String destino = "";
+    private Integer id;
+    private int veicindex = 0;
+    private double vhorareal = 0;
+    private double valorhora = 0;
+    private double distancia = 0;
+    private double valortotal = 0;
+    private double kmlitro = 0; // quanto o caminhao roda por litro
+    private double preco = 0; // preço do combustivel por litro no posto
+    private double vcombust = 0.0;// valor do combustivel consumido na viagem
+    private List<Veiculo>veiculolist;
     // Construtor padrão
     public OrdemDeServico(){};
-    public OrdemDeServico(List<Veiculo>veiculolist){
+         public OrdemDeServico(List<Veiculo> veiculolist) {
         this.veiculolist = veiculolist;
+    }
+    public OrdemDeServico(List<Veiculo>veiculolist, String cpf_cnpj){
+        this.veiculolist = veiculolist;
+        this.cpf_cnpj = cpf_cnpj;
     };
+
+    public String getCpf_cnpj() {
+        return cpf_cnpj;
+    }
+
+    public void setCpf_cnpj(String cpf_cnpj) {
+        this.cpf_cnpj = cpf_cnpj;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
+    
+    
+    
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    
+    
+    
+    public List<Veiculo> getVeiculolist() {
+        return veiculolist;
+    }
+
+    public void setVeiculolist(List<Veiculo> veiculolist) {
+        this.veiculolist = veiculolist;
+    }
+    
+
+        public String getVfcombust() {
+        return vfcombust;
+    }
+
+    public void setVfcombust(String vfcombust) {
+        this.vfcombust = vfcombust;
+    }
+
+    public String getDuracao() {
+        return duracao;
+    }
+
+    public void setDuracao(String duracao) {
+        this.duracao = duracao;
+    }
+
+    public String getListaItens() {
+        return listaItens;
+    }
+
+    public void setListaItens(String listaItens) {
+        this.listaItens = listaItens;
+    }
+
+    public String getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(String inicio) {
+        this.inicio = inicio;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+
+    public double getValorhora() {
+        return valorhora;
+    }
+
+    public void setValorhora(double valorhora) {
+        this.valorhora = valorhora;
+    }
+
+    public double getDistancia() {
+        return distancia;
+    }
+
+    public void setDistancia(double distancia) {
+        this.distancia = distancia;
+    }
+
+    public double getValortotal() {
+        return valortotal;
+    }
+
+    public void setValortotal(double valortotal) {
+        this.valortotal = valortotal;
+    }
 
     @Override
     public int hashCode() {
@@ -171,7 +283,8 @@ public class OrdemDeServico implements Serializable{
                                 veicindex = consumoVeiculoList();
                                  kmlitro = veiculolist.get(veicindex)
                                          .getConsumo();
-                                 
+                                 placa = veiculolist.get(veicindex)
+                                         .getPlaca();
                                 // retorna valor por kilometro do consumo 
                                 vcombust = distancia * conscombust.custoKm(preco
                                         ,kmlitro);
@@ -221,13 +334,15 @@ public class OrdemDeServico implements Serializable{
                     break;
                 case 9 :
                     
-                    /**
-                    Double kilometragem = (long)distancia + veiculolist.get(veicindex)
-                            .kilometragem;
+                   
+                    Double kilometragem = (long)distancia + veiculolist
+                            .get(veicindex)
+                            .getKilometragem();
                     
                     // Atualiza a kilometragem do veiculo utilizado no serviço
-                    veiculolist.get(veicindex).kilometragem = kilometragem;
-                    **/
+                    veiculolist.get(veicindex)
+                            .setKilometragem(kilometragem) ;
+                    
                     
                     //Reorganiza listaItens com ',' 
                     listaItens = "";
@@ -243,9 +358,9 @@ public class OrdemDeServico implements Serializable{
                                 "INSERT INTO ordem_servico"
                                 + "(lista_itens,inicio,destino,distancia"
                                         + ",combustivel$,tempo_servico"
-                                        +",valor_hora,valor_total)"
+                                        +",valor_hora,valor_total,fk_placa,fk_cpf_cnpj)"
                                 + "VALUES"
-                                + "(?,?,?,?,?,?,?,?)");
+                                + "(?,?,?,?,?,?,?,?,?,?)");
                         st.setString(1, listaItens);
                         st.setString(2, inicio);
                         st.setString(3, destino);
@@ -254,6 +369,8 @@ public class OrdemDeServico implements Serializable{
                         st.setString(6, duracao);
                         st.setDouble(7, valorhora);
                         st.setDouble(8, valortotal);
+                        st.setString(9,placa);
+                        st.setString(10,cpf_cnpj);
 
                         int rowsAffected = st.executeUpdate();
                     } catch (SQLException e) {
@@ -273,6 +390,8 @@ public class OrdemDeServico implements Serializable{
 
         
     }
+
+
     public List<String> addItem (List<String> itens){
         boolean voltar = true;
         String item = "";
@@ -295,14 +414,36 @@ public class OrdemDeServico implements Serializable{
        
 
         for (Veiculo veic : veiculolist) {
-            lista = lista + i + " Placa: " + veic.getPlaca() + " " + veic.getConsumo() + " Km/L";
+            lista = lista + "###"+i +"###\n"+ veic.toString();
             i++;
         }
-        lista = "Digite o nº do veiculo desejado: \n" + lista;
+        lista = "Digite o nº do veiculo desejado: \n\n" + lista;
+        JTextArea veiculotxt = new JTextArea(lista);
+        veiculotxt.setLineWrap(true);
+        veiculotxt.setWrapStyleWord(true);
+        veiculotxt.setEditable(false);
+        JScrollPane veiculolistxt = new JScrollPane(veiculotxt);
+        veiculolistxt.setPreferredSize(new Dimension(300, 300));
+
+        
         op = Integer.parseInt(JOptionPane.showInputDialog(null
-                , lista));
+                , veiculolistxt));
         
         return op;
     }
-    
+    public String toString(){
+        return 
+        "Nome: "+ nome+"\n"
+        +"CPF\"CNPJ: "+cpf_cnpj+"\n"
+        +"Lista de Itens: "+listaItens+"\n"
+        +"Inicio: "+inicio+"\n"
+        +"Destino: "+destino+"\n"
+        +"Placa: "+placa + "\n"        
+        +"Distância: "+ String.format("%.2f", distancia)+"Km"+"\n"
+        +"Duração: "+duracao+"\n"
+        +"Valor Hora: "+String.format("%.2f",valorhora)+"\n"
+        +"Valor Combustível: " + vfcombust + "\n"
+        +"Valor Total: "+String.format("%.2f",valortotal)+"\n"
+        +"----------------" + "\n"        ;
+    }
 }

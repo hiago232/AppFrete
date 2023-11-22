@@ -5,6 +5,7 @@
 package aplicacao;
 import DAO.ClienteDao;
 import DAO.DaoFactory;
+import DAO.OrdemDeServicoDao;
 import DAO.VeiculoDao;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,10 +37,14 @@ public class aplicacao {
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
         
-        // Importa Lista Cliente do MySql
+        // Importa Tabela Cliente do MySql
 
         ClienteDao clienteDao = DaoFactory.criaClienteDao();
         clientelist = clienteDao.findAll();
+        
+        // Importa Tabela ordem_servico do MySql
+        OrdemDeServicoDao ordemDeServicoDao = DaoFactory.criaOrdemDeServicoDao();
+        oslist = ordemDeServicoDao.findAll();
 
         
         // Importa Lista Veiculo do MySql
@@ -63,7 +68,7 @@ public class aplicacao {
                         int index = temCpf(clientelist,cpf);//retorna o indice
                         if (index == -1 ){break;}
                         //Instancia OS passando lista de veiculos como argumento
-                        OrdemDeServico os = new OrdemDeServico(veiculolist);
+                        OrdemDeServico os = new OrdemDeServico(veiculolist,cpf);
                         os.menu();
                         //Vamos manipular a lista de OS do cliente
                         List<OrdemDeServico> clienteoslist = new ArrayList<>();
@@ -77,10 +82,11 @@ public class aplicacao {
                         clienteoslist.add(os);
                         
                         //atualiza Banco de lista de OS
-                        oslist.add(os);
+                        // Agora é realizado dentro do objeto direto p/ BD
+                        //oslist.add(os);
                         
                         //Atualiza lista de veiculos
-                        veiculolist = os.veiculolist;
+                        veiculolist = os.getVeiculolist();
                         
                         //Atualiza lista de OS do cliente
                         clientelist.get(index).setOslist(clienteoslist);
@@ -137,8 +143,16 @@ public class aplicacao {
 
                     //consultaVeiculo();
                     break;
+                    
+                    
+                case 5 : 
+                    
+                    exibeOSList(oslist);
+
+    
 
             }
+            
 
         }
         DB.closeConnection();
@@ -326,6 +340,22 @@ public class aplicacao {
         veiculolistxt.setPreferredSize(new Dimension(300, 300));
 
         JOptionPane.showMessageDialog(null, veiculolistxt);
+    }
+    public static void exibeOSList (List<OrdemDeServico>oslist){
+        String lista = "";
+
+        for (OrdemDeServico os : oslist) {
+            lista += os.toString();
+        }
+        JTextArea ostxt = new JTextArea(lista);
+        ostxt.setLineWrap(true);
+        ostxt.setWrapStyleWord(true);
+        ostxt.setEditable(false);
+        JScrollPane oslistxt = new JScrollPane(ostxt);
+        oslistxt.setPreferredSize(new Dimension(300, 300));
+
+        JOptionPane.showMessageDialog(null, oslistxt);
+    
     }
     
 }

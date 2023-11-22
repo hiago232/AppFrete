@@ -84,9 +84,9 @@ public class Veiculo implements Serializable{
     
     public String toString(){
          return "----------------"+"\n"
-                +"1 - Placa: " + placa + "\n"
-                + "2 - Kilometragem: " + String.format("%.3f", kilometragem) + "\n"
-                + "3 - Consumo: " + String.format("%.2f", consumo) + "\n"
+                +"Placa: " + placa + "\n"
+                + "Kilometragem: " + String.format("%.3f", kilometragem) + "\n"
+                + "Consumo: " + String.format("%.2f", consumo) + "\n"
                 +"----------------"+"\n";
     }
     
