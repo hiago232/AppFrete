@@ -46,14 +46,38 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
     }
 
     @Override
-    public OrdemDeServico findById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<OrdemDeServico> findByFkCpfCnpj(String fkCpfCnpj) {
+        List<OrdemDeServico> osList = new ArrayList<>();
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try{
+            st = conn.prepareStatement(
+                    "select  * \n"
+                    + "from  ordem_servico as os join  "
+                    + "(select c.nome, c.cpf_cnpj from cliente as c) as c\n"
+                    + "on (os.fk_cpf_cnpj = c.cpf_cnpj  ) "
+                     + "where fk_cpf_cnpj = ?");
+            st.setString(1, fkCpfCnpj);
+            rs = st.executeQuery();
+            while (rs.next()){
+                OrdemDeServico os = instanciaOrdemDeServico(rs);;
+                osList.add(os);
+            }
+            return osList;
+        }catch(SQLException e){
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+        
+        
     }
 
     @Override
     public List<OrdemDeServico> findAll() {
-        
-       
+
         List<OrdemDeServico> osList = new ArrayList<>();
         Statement st = null;
         ResultSet rs = null;

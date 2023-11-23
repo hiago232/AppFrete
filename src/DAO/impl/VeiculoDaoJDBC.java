@@ -94,7 +94,7 @@ public class VeiculoDaoJDBC implements VeiculoDao{
         }
     }
 
-    private Veiculo instanciaVeiculo(ResultSet rs) throws SQLException  {
+    public Veiculo instanciaVeiculo(ResultSet rs) throws SQLException  {
         Veiculo veiculo =new Veiculo();
         veiculo.setPlaca(rs.getString("placa"));
         veiculo.setKilometragem(rs.getDouble("kilometragem"));

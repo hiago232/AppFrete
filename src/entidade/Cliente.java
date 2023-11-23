@@ -235,6 +235,7 @@ public class Cliente implements Serializable {
                 +"CEP: "+ cep + "\n"
                 +"Celular: "+ cel + "\n"
                 +"E-mail: "+ email + "\n"
+                +"Serviços:"+oslist.size()+ "\n"
                 +"----------------" + "\n";
 
                 }

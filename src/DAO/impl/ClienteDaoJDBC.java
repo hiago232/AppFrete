@@ -5,16 +5,22 @@
 package DAO.impl;
 
 import DAO.ClienteDao;
+import DAO.DaoFactory;
+import DAO.OrdemDeServicoDao;
 import Db.DB;
 import Db.DbException;
 import entidade.Cliente;
+import entidade.OrdemDeServico;
 import entidade.Veiculo;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -44,21 +50,45 @@ public class ClienteDaoJDBC implements ClienteDao{
 
     @Override
     public Cliente findByCpf_Cnpj(String cpf_cnpj) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try{
+            st = conn.prepareStatement(
+                    "select * from cliente "
+                            + "where cpf_cnpj = ?");
+            st.setString(1, cpf_cnpj);
+            rs = st.executeQuery();
+            if (rs.next()){
+                Cliente cliente= instanciaCliente(rs);;
+                return cliente;
+            }
+            return null;
+        }catch(SQLException e){
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+        
     }
 
     @Override
     public List<Cliente> findAll() {
+        
         List<Cliente> clienteList = new ArrayList<>();
+
         Statement st = null;
         ResultSet rs = null;
         try {
             st = conn.createStatement();
 
-            rs = st.executeQuery("select * from cliente");
+            rs = st.executeQuery("select  * \n"
+                    + "from  cliente");
 
             while (rs.next()) {
-                Cliente cliente = instanciaCliente(rs);
+                Cliente cliente = instanciaCliente(rs);      
                 clienteList.add(cliente);
             }
             return clienteList;
@@ -72,9 +102,12 @@ public class ClienteDaoJDBC implements ClienteDao{
 
     private Cliente instanciaCliente(ResultSet rs) throws SQLException{
         String cpf_cnpj = "";
-        
-        while (rs.next()) {
+        String fk_cpf_cnpj="";
+        OrdemDeServicoDao osDao = DaoFactory.criaOrdemDeServicoDao();
+
+
             Cliente cliente = new Cliente();
+            fk_cpf_cnpj = rs.getString("cpf_cnpj");
             if (rs.getString("cpf_cnpj").length() < 11) {
                 cpf_cnpj = "0" + rs.getString("cpf_cnpj");
                 }else {
@@ -86,10 +119,10 @@ public class ClienteDaoJDBC implements ClienteDao{
             cliente.setCep(rs.getLong("cep"));
             cliente.setNasc((String) rs.getString("data_nasc"));
             cliente.setEndereco(rs.getString("endereco"));
-            cliente.setCel(rs.getLong("cel"));    
+            cliente.setCel(rs.getLong("cel"));  
+            cliente.setOslist(osDao.findByFkCpfCnpj(fk_cpf_cnpj));
             return cliente;
-            }
-        return null;
+
 
         }
     }

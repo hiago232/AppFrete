@@ -19,7 +19,7 @@ public interface OrdemDeServicoDao {
 
     void deleteById(int id);
 
-    OrdemDeServico findById(int id);
+    List<OrdemDeServico> findByFkCpfCnpj(String fkCpfCnpj);
 
     List<OrdemDeServico> findAll();
     

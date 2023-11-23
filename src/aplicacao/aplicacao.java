@@ -41,7 +41,8 @@ public class aplicacao {
 
         ClienteDao clienteDao = DaoFactory.criaClienteDao();
         clientelist = clienteDao.findAll();
-        
+
+
         // Importa Tabela ordem_servico do MySql
         OrdemDeServicoDao ordemDeServicoDao = DaoFactory.criaOrdemDeServicoDao();
         oslist = ordemDeServicoDao.findAll();
@@ -72,18 +73,18 @@ public class aplicacao {
                         os.menu();
                         //Vamos manipular a lista de OS do cliente
                         List<OrdemDeServico> clienteoslist = new ArrayList<>();
-                        /** Lembrando que o indice do cliente agora esta na 
-                         * variavel cpf.
+                        /** Lembrando que o indice do cliente esta na 
+                         * variavel index.
                          * Vamos puxar a lista de OS do cliente.
                          */
                         clienteoslist=clientelist.get(index).getOslist();
                         
-                        //atualiza lista de os
+                        //atualiza lista de os do cliente na aplicação
                         clienteoslist.add(os);
                         
-                        //atualiza Banco de lista de OS
-                        // Agora é realizado dentro do objeto direto p/ BD
-                        //oslist.add(os);
+                        //atualiza Banco de lista de OS na aplicação
+                        
+                        oslist.add(os);
                         
                         //Atualiza lista de veiculos
                         veiculolist = os.getVeiculolist();
@@ -243,13 +244,13 @@ public class aplicacao {
             
             lista = lista +  cliente.toString();
         }
-        
+        lista+= clientelist.size();
         JTextArea clientetxt = new JTextArea(lista);
         clientetxt.setLineWrap(true);
         clientetxt.setWrapStyleWord(true);
         clientetxt.setEditable(false);
         JScrollPane clientelistxt = new JScrollPane(clientetxt);
-        clientelistxt.setPreferredSize(new Dimension(300, 300));
+        clientelistxt.setPreferredSize(new Dimension(500, 500));
         
         JOptionPane.showMessageDialog(null, clientelistxt);
 
