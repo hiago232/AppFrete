@@ -29,7 +29,7 @@ public class OrdemDeServico implements Serializable{
     private String nome = "";
     private String placa = "";
     private String vfcombust = "";
-    private String t = "Ordem de Serviço";
+    private String t = "|Ordem de Serviço|";
     private String ti = "";
     private String tf = "";
     private String duracao = "00:00";
@@ -41,20 +41,23 @@ public class OrdemDeServico implements Serializable{
     private int veicindex = 0;
     private double vhorareal = 0;
     private double valorhora = 0;
-    private double distancia = 0;
+    private double distancia = 1;
     private double valortotal = 0;
     private double kmlitro = 0; // quanto o caminhao roda por litro
     private double preco = 0; // preço do combustivel por litro no posto
     private double vcombust = 0.0;// valor do combustivel consumido na viagem
     private List<Veiculo>veiculolist;
+    private Veiculo veiculo = new Veiculo();
+    
     // Construtor padrão
     public OrdemDeServico(){};
          public OrdemDeServico(List<Veiculo> veiculolist) {
         this.veiculolist = veiculolist;
     }
-    public OrdemDeServico(List<Veiculo>veiculolist, String cpf_cnpj){
+    public OrdemDeServico(List<Veiculo>veiculolist,String nome, String cpf_cnpj){
         this.veiculolist = veiculolist;
         this.cpf_cnpj = cpf_cnpj;
+        this.nome = nome;
     };
 
     public String getCpf_cnpj() {
@@ -71,6 +74,14 @@ public class OrdemDeServico implements Serializable{
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
     }
     
     
@@ -194,15 +205,18 @@ public class OrdemDeServico implements Serializable{
         CalcCombustivel conscombust = new CalcCombustivel();
         DecimalFormat formatador = new DecimalFormat("#.###");
       
-       
+        if (nome.equals("")) {
+            nome = "avulso";
+        }
         
         boolean sair = true;
         int op = 0;
     
         while (sair){
             // Atribui o valor total a cada repetição
-            valortotal = 10.00;// vcombust + valorhora; 
-            String osmenu = "1 - Add item\n"
+            valortotal = vcombust + valorhora; 
+            String osmenu = "Cliente: "+nome.toUpperCase()+"\n"
+                +"1 - Add item\n"
                 +"2 - Exibir lista\n"
                 +"3 - Local inicial:   "+inicio+"\n"
                 +"4 - Destino:    "+destino+"\n"
@@ -278,6 +292,10 @@ public class OrdemDeServico implements Serializable{
                                         .showInputDialog(null
                                         ,"valor do combustivel por litro"
                                         ,t, 3));
+                                //Atualiza valor do consumo conforme a distancia
+                                vcombust = distancia * conscombust.custoKm
+                                        (preco, kmlitro);
+                                vfcombust = formatador.format(vcombust);
                                 break;
                             case 2 : // Valor consumo
                                 veicindex = consumoVeiculoList();

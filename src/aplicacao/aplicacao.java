@@ -30,6 +30,7 @@ public class aplicacao {
     
     public static void main(String[] args) {
         String cpf = "";
+        String nome = "";
         boolean sair = true;
         int op = 0;
         String placa = "";
@@ -69,7 +70,8 @@ public class aplicacao {
                         int index = temCpf(clientelist,cpf);//retorna o indice
                         if (index == -1 ){break;}
                         //Instancia OS passando lista de veiculos como argumento
-                        OrdemDeServico os = new OrdemDeServico(veiculolist,cpf);
+                        nome = clientelist.get(index).getNome();
+                        OrdemDeServico os = new OrdemDeServico(veiculolist, nome,cpf);
                         os.menu();
                         //Vamos manipular a lista de OS do cliente
                         List<OrdemDeServico> clienteoslist = new ArrayList<>();
@@ -260,7 +262,7 @@ public class aplicacao {
     public static int temCpf(List<Cliente> clientelist,String cpf){
         int i = 0;
         for (i = 0; i < clientelist.size(); i++) {
-            if (clientelist.get((int) i).equals(cpf)) {
+            if (clientelist.get((int) i).getCpf_cnpj().equals(cpf)) {
                 return i;
             }
         }

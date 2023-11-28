@@ -3,9 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package DAO.impl;
+import DAO.DaoFactory;
 import Db.DB;
 import Db.DbException;
 import DAO.OrdemDeServicoDao;
+import DAO.VeiculoDao;
 import entidade.OrdemDeServico;
 import java.util.List;
 import java.sql.Connection;
@@ -107,6 +109,8 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
     
         private OrdemDeServico instanciaOrdemDeServico(ResultSet rs) throws SQLException  {
         OrdemDeServico os =new OrdemDeServico();
+        
+       
             String fk_cpf_cnpj = "";
             if (rs.getString("fk_cpf_cnpj").length() < 11) {
                 fk_cpf_cnpj = "0" + rs.getString("fk_cpf_cnpj");
