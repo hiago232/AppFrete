@@ -7,6 +7,7 @@ import DAO.ClienteDao;
 import DAO.DaoFactory;
 import DAO.OrdemDeServicoDao;
 import DAO.VeiculoDao;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -30,10 +31,14 @@ public class aplicacao {
     
     public static void main(String[] args) {
         String cpf = "";
+        int index = 0;
         String nome = "";
         boolean sair = true;
         int op = 0;
         String placa = "";
+        
+        Cliente cliente = new Cliente();
+        
         List<Cliente> clientelist = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
@@ -67,7 +72,7 @@ public class aplicacao {
                                          "Insira o CPF: "
                                         , t
                                         , 3);
-                        int index = temCpf(clientelist,cpf);//retorna o indice
+                        index = temCpf(clientelist,cpf);//retorna o indice
                         if (index == -1 ){break;}
                         //Instancia OS passando lista de veiculos como argumento
                         nome = clientelist.get(index).getNome();
@@ -97,11 +102,31 @@ public class aplicacao {
                     }
                         OrdemDeServico os = new OrdemDeServico(veiculolist);
                         os.menu();
+                        
+                        //atualiza Banco de lista de OS na aplicação
                         oslist.add(os);
                         break;                  
                    
                 case 2 :
-                    clientelist = cadCliente(clientelist);
+                    // Retorna o novo cliente
+                    cliente = cadCliente(clientelist);
+                    //Atualiza lista de clientes da aplicação
+                    clientelist.add(cliente);
+                    //retorna o indice do ultimo cliente adcionado à lista
+                    index = clientelist.lastIndexOf(cliente);
+                    //Insere o novo cliente no BD
+                    int rowsAffected = clienteDao
+                            .insert(clientelist.get(index));
+                    if (rowsAffected>0){
+                        JOptionPane
+                            .showMessageDialog(null
+                                    , "Cliente Cadastrado!");}
+                    else{
+                        JOptionPane
+                                .showMessageDialog(null,
+                                         "Falha ao Cadastrar!");
+                    }
+                    
                     break;
                 case 3 :
                     exibeClienteList(clientelist);
@@ -135,11 +160,11 @@ public class aplicacao {
                         break;
                        
                     }
-                    /**if (veiculolist.isEmpty()){
+                    if (veiculolist.isEmpty()){
                         JOptionPane.showMessageDialog(null
                                 ,"Nenhum Veículo Cadastrado!");
                         break;
-                    }**/
+                    }
                     
 
                     exibeVeiculoList(veiculolist);
@@ -149,7 +174,8 @@ public class aplicacao {
                     
                     
                 case 5 : 
-                    
+                    // Atualiza lista
+                    oslist = ordemDeServicoDao.findAll();
                     exibeOSList(oslist);
 
     
@@ -174,7 +200,7 @@ public class aplicacao {
                 , menu, t, 3));
         return op;
     } 
-    public static List<Cliente> cadCliente(List<Cliente>clientelist){
+    public static Cliente cadCliente(List<Cliente>clientelist){
          String nome , endereco, email;
          String t = "Novo Cliente";
          String nasc = "";
@@ -207,37 +233,8 @@ public class aplicacao {
                  t, 3));
              
          Cliente cliente = new Cliente(nome,endereco,nasc,cpf_cnpj,cep,cel,email);
-         clientelist.add(cliente); // Atualiza Lista de clientes
-         
-         Connection conn = null;
-         PreparedStatement st = null;
-         try {
-            conn = DB.getConnection();
-            st = conn.prepareStatement(
-                    "INSERT INTO cliente"
-                    + "(nome,endereco,data_nasc,cpf_cnpj,cep,cel,email)"
-                    + "VALUES"
-                    + "(?,?,?,?,?,?,?)");
-            st.setString(1, nome);
-            st.setString(2, endereco);
-            st.setString(3, nasc);
-            
-            String string_cpf_cnpj = "";
-            string_cpf_cnpj = string_cpf_cnpj + cpf_cnpj;
-            st.setString(4, string_cpf_cnpj); 
-            
-            st.setLong(5, cep);
-            st.setLong(6, cel);
-            st.setString(7, email);
 
-            int rowsAffected = st.executeUpdate();
-         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-         finally{
-        DB.closeStatement(st);  
-         }
-         return clientelist;
+         return cliente;
     }
     public static void exibeClienteList(List<Cliente>clientelist){
         String lista = "";

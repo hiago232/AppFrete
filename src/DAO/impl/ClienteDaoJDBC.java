@@ -35,7 +35,33 @@ public class ClienteDaoJDBC implements ClienteDao{
     }
 
     @Override
-    public void insert(Cliente obj) {
+    public Integer insert(Cliente cliente) {
+        Connection conn = null;
+        PreparedStatement st = null;
+        int rowsAffected = 0;
+        try {
+            conn = DB.getConnection();
+            st = conn.prepareStatement(
+                    "INSERT INTO cliente"
+                    + "(nome,endereco,data_nasc,cpf_cnpj,cep,cel,email)"
+                    + "VALUES"
+                    + "(?,?,?,?,?,?,?)");
+            st.setString(1, cliente.getNome());
+            st.setString(2, cliente.getEndereco());
+            st.setString(3, cliente.getNasc());
+            st.setString(4, cliente.getCpf_cnpj());
+
+            st.setLong(5, cliente.getCep());
+            st.setLong(6, cliente.getCel());
+            st.setString(7, cliente.getEmail());
+
+            rowsAffected = st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DB.closeStatement(st);
+        }
+        return rowsAffected;
     }
 
     @Override

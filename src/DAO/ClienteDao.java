@@ -12,7 +12,7 @@ import java.util.List;
  * @author Usuário
  */
 public interface ClienteDao {
-    void insert (Cliente obj);
+    Integer insert (Cliente obj);
     void update(Cliente obj);
     void deleteByCpf_Cnpj(String cpf_cnpj);
     Cliente findByCpf_Cnpj(String cpf_cnpj);
