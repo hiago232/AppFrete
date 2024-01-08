@@ -13,7 +13,7 @@ import java.util.List;
  * @author Usuário
  */
 public interface VeiculoDao {
-    void insert(Veiculo obj);
+    Integer insert(Veiculo obj);
 
     void update(Veiculo obj);
 

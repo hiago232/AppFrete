@@ -26,7 +26,8 @@ public class Cliente implements Serializable {
     boolean sair = true;
     private List <OrdemDeServico> oslist; // lista de ordens de serviço
     
-    private String menu =  "1 - Abrir ordem de serviço";
+    //Implementar menu #em processo de construção
+    private String menu =  "";
      
     
     
@@ -208,7 +209,7 @@ public class Cliente implements Serializable {
                      menu, t, 3));
             switch (op) {
                 case 1:
-                    addOs();
+                    abrirOs();
                     break;
             }
         }
@@ -218,13 +219,17 @@ public class Cliente implements Serializable {
     
     
     
+    public void addOs(OrdemDeServico osobj){
+       oslist.add(osobj); 
+    }
     
     // Este metodo ainda não possui utilidade
-    public void addOs (){
+    public void abrirOs (){
         OrdemDeServico osobj = new OrdemDeServico();
         osobj.menu();
         oslist.add(osobj);
     }
+   
     public String toString (){
         return "----------------" + "\n"
                 +"Nome: "+ nome + "\n"

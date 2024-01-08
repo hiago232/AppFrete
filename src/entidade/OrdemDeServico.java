@@ -46,16 +46,14 @@ public class OrdemDeServico implements Serializable{
     private double kmlitro = 0; // quanto o caminhao roda por litro
     private double preco = 0; // preço do combustivel por litro no posto
     private double vcombust = 0.0;// valor do combustivel consumido na viagem
-    private List<Veiculo>veiculolist;
+    private List<Veiculo>veiculolist = new ArrayList<>();
     private Veiculo veiculo = new Veiculo();
     
     // Construtor padrão
     public OrdemDeServico(){};
-         public OrdemDeServico(List<Veiculo> veiculolist) {
-        this.veiculolist = veiculolist;
-    }
-    public OrdemDeServico(List<Veiculo>veiculolist,String nome, String cpf_cnpj){
-        this.veiculolist = veiculolist;
+    
+    public OrdemDeServico(String nome, String cpf_cnpj){
+       
         this.cpf_cnpj = cpf_cnpj;
         this.nome = nome;
     };
@@ -83,10 +81,6 @@ public class OrdemDeServico implements Serializable{
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
     }
-    
-    
-    
-    
 
     public String getPlaca() {
         return placa;
@@ -96,9 +90,6 @@ public class OrdemDeServico implements Serializable{
         this.placa = placa;
     }
 
-    
-    
-    
     public List<Veiculo> getVeiculolist() {
         return veiculolist;
     }
@@ -108,7 +99,7 @@ public class OrdemDeServico implements Serializable{
     }
     
 
-        public String getVfcombust() {
+    public String getVfcombust() {
         return vfcombust;
     }
 
@@ -196,7 +187,7 @@ public class OrdemDeServico implements Serializable{
     
     
     
-    //Procedimento
+    //métodos
     public void menu(){
      
         // Declaração de variáveis metodo menu
@@ -299,10 +290,11 @@ public class OrdemDeServico implements Serializable{
                                 break;
                             case 2 : // Valor consumo
                                 veicindex = consumoVeiculoList();
-                                 kmlitro = veiculolist.get(veicindex)
-                                         .getConsumo();
-                                 placa = veiculolist.get(veicindex)
-                                         .getPlaca();
+                                 
+                                 veiculo  = veiculolist.get(veicindex);
+                                 kmlitro = veiculo.getConsumo();
+                                 placa = veiculo.getPlaca();
+                                         
                                 // retorna valor por kilometro do consumo 
                                 vcombust = distancia * conscombust.custoKm(preco
                                         ,kmlitro);
@@ -367,35 +359,6 @@ public class OrdemDeServico implements Serializable{
                     for (String item : itens) {
                         listaItens = listaItens + item + ",";
                     }
-                    
-                    Connection conn = null;
-                    PreparedStatement st = null;
-                    try {
-                        conn = DB.getConnection();
-                        st = conn.prepareStatement(
-                                "INSERT INTO ordem_servico"
-                                + "(lista_itens,inicio,destino,distancia"
-                                        + ",combustivel$,tempo_servico"
-                                        +",valor_hora,valor_total,fk_placa,fk_cpf_cnpj)"
-                                + "VALUES"
-                                + "(?,?,?,?,?,?,?,?,?,?)");
-                        st.setString(1, listaItens);
-                        st.setString(2, inicio);
-                        st.setString(3, destino);
-                        st.setDouble(4, distancia);
-                        st.setString(5, vfcombust);
-                        st.setString(6, duracao);
-                        st.setDouble(7, valorhora);
-                        st.setDouble(8, valortotal);
-                        st.setString(9,placa);
-                        st.setString(10,cpf_cnpj);
-
-                        int rowsAffected = st.executeUpdate();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    
-                    
                     sair = false;
                     break;
                 default :
@@ -408,8 +371,10 @@ public class OrdemDeServico implements Serializable{
 
         
     }
-
-
+    public void addVeiculo(Veiculo veic){
+        veiculolist.add(veic);
+        
+    }
     public List<String> addItem (List<String> itens){
         boolean voltar = true;
         String item = "";

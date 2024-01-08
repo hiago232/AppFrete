@@ -74,35 +74,39 @@ public class aplicacao {
                                         , 3);
                         index = temCpf(clientelist,cpf);//retorna o indice
                         if (index == -1 ){break;}
-                        //Instancia OS passando lista de veiculos como argumento
+                          
                         nome = clientelist.get(index).getNome();
-                        OrdemDeServico os = new OrdemDeServico(veiculolist, nome,cpf);
+                        OrdemDeServico os = new OrdemDeServico(nome,cpf);
+                        
+                        //Adciona veiculos à OS instanciada
+                        for(Veiculo v : veiculolist){
+                            os.addVeiculo(v);
+                        }
+                        
                         os.menu();
-                        //Vamos manipular a lista de OS do cliente
-                        List<OrdemDeServico> clienteoslist = new ArrayList<>();
-                        /** Lembrando que o indice do cliente esta na 
-                         * variavel index.
-                         * Vamos puxar a lista de OS do cliente.
-                         */
-                        clienteoslist=clientelist.get(index).getOslist();
-                        
-                        //atualiza lista de os do cliente na aplicação
-                        clienteoslist.add(os);
-                        
-                        //atualiza Banco de lista de OS na aplicação
+                        ordemDeServicoDao.insert(os);
+                        clientelist.get(index).addOs(os);
+
+                        //atualiza Banco de lista de OS da aplicação
                         
                         oslist.add(os);
                         
-                        //Atualiza lista de veiculos
+                        //Atualiza lista de veiculos da aplicacao
                         veiculolist = os.getVeiculolist();
-                        
-                        //Atualiza lista de OS do cliente
-                        clientelist.get(index).setOslist(clienteoslist);
                         break;
                     }
-                        OrdemDeServico os = new OrdemDeServico(veiculolist);
-                        os.menu();
+                        //Cliente Avulso
+                        OrdemDeServico os = new OrdemDeServico();
                         
+                        //Adciona veiculos à OS criada
+                        for (Veiculo v : veiculolist) {
+                        os.addVeiculo(v);
+                         }
+                        os.menu();
+                        ordemDeServicoDao.insert(os);
+                        //Atualiza lista de veiculos da aplicacao
+                        veiculolist = os.getVeiculolist();
+                     
                         //atualiza Banco de lista de OS na aplicação
                         oslist.add(os);
                         break;                  
@@ -112,21 +116,7 @@ public class aplicacao {
                     cliente = cadCliente(clientelist);
                     //Atualiza lista de clientes da aplicação
                     clientelist.add(cliente);
-                    //retorna o indice do ultimo cliente adcionado à lista
-                    index = clientelist.lastIndexOf(cliente);
-                    //Insere o novo cliente no BD
-                    int rowsAffected = clienteDao
-                            .insert(clientelist.get(index));
-                    if (rowsAffected>0){
-                        JOptionPane
-                            .showMessageDialog(null
-                                    , "Cliente Cadastrado!");}
-                    else{
-                        JOptionPane
-                                .showMessageDialog(null,
-                                         "Falha ao Cadastrar!");
-                    }
-                    
+
                     break;
                 case 3 :
                     exibeClienteList(clientelist);
@@ -140,6 +130,8 @@ public class aplicacao {
                             , t, 3));
                     if(op == 1){
                         veiculolist.add(cadVeiculo());//Implementar codigo para atualizar veiculos apos cadastro
+                        
+                        
                         break;
                     }
                     if (op == 2){
@@ -165,24 +157,13 @@ public class aplicacao {
                                 ,"Nenhum Veículo Cadastrado!");
                         break;
                     }
-                    
-
                     exibeVeiculoList(veiculolist);
-
-                    //consultaVeiculo();
-                    break;
-                    
-                    
+                    break;       
                 case 5 : 
                     // Atualiza lista
                     oslist = ordemDeServicoDao.findAll();
                     exibeOSList(oslist);
-
-    
-
             }
-            
-
         }
         DB.closeConnection();
     }
@@ -193,7 +174,7 @@ public class aplicacao {
                       2 - Cadastrar Cliente
                       3 - Exibir Lista de Clientes
                       4 - Veículo
-                      5 - Info.
+                      5 - Serviços Realizados
                       6 - Sair
                       """;
         op = Integer.parseInt(JOptionPane.showInputDialog(null
@@ -201,6 +182,8 @@ public class aplicacao {
         return op;
     } 
     public static Cliente cadCliente(List<Cliente>clientelist){
+        ClienteDao clienteDao = DaoFactory.criaClienteDao();
+        
          String nome , endereco, email;
          String t = "Novo Cliente";
          String nasc = "";
@@ -233,6 +216,17 @@ public class aplicacao {
                  t, 3));
              
          Cliente cliente = new Cliente(nome,endereco,nasc,cpf_cnpj,cep,cel,email);
+        int rowsAffected = clienteDao
+                .insert(cliente);
+        if (rowsAffected > 0) {
+            JOptionPane
+                    .showMessageDialog(null,
+                             "Cliente Cadastrado!");
+        } else {
+            JOptionPane
+                    .showMessageDialog(null,
+                            "Falha ao Cadastrar!");
+        }
 
          return cliente;
     }
@@ -266,6 +260,8 @@ public class aplicacao {
         return -1;
     }
     public static Veiculo cadVeiculo (){
+        
+        VeiculoDao veiculoDao = DaoFactory.criaVeiculoDao();
         String placa = "";
         Double kilometragem ;
         double consumo = 0;
@@ -277,24 +273,16 @@ public class aplicacao {
         consumo = Double.parseDouble(JOptionPane.showInputDialog(null
                 , "Digite o Consumo de Combustivel do Veiculo Abaixo: (Km/L)"));
         Veiculo veiculo = new Veiculo(placa,kilometragem,consumo);
-        Connection conn = null;
-        PreparedStatement st = null;
-        try {
-            conn = DB.getConnection();
-            st = conn.prepareStatement(
-                    "INSERT INTO veiculo"
-                    + "(placa,kilometragem,consumo)"
-                    + "VALUES"
-                    + "(?,?,?)");
-            st.setString(1, placa);
-            st.setDouble(2, kilometragem);
-            st.setDouble(3, consumo);
-
-            int rowsAffected = st.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        int rowsAffected = veiculoDao.insert(veiculo);
+        if (rowsAffected > 0) {
+            JOptionPane
+                    .showMessageDialog(null,
+                            "Veiculo Cadastrado!");
+        } else {
+            JOptionPane
+                    .showMessageDialog(null,
+                            "Falha ao Cadastrar!");
         }
-        DB.closeConnection();
         return veiculo;
     }
     public static int temPlaca (List<Veiculo> veiculolist, VeiculoDao veiculoDao){

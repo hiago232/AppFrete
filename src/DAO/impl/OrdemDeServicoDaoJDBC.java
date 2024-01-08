@@ -33,8 +33,34 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
     }
 
     @Override
-    public void insert(OrdemDeServico obj) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void insert(OrdemDeServico os) {
+
+        PreparedStatement st = null;
+        try {
+            
+            st = conn.prepareStatement(
+                    "INSERT INTO ordem_servico"
+                    + "(lista_itens,inicio,destino,distancia"
+                    + ",combustivel$,tempo_servico"
+                    + ",valor_hora,valor_total,fk_placa,fk_cpf_cnpj)"
+                    + "VALUES"
+                    + "(?,?,?,?,?,?,?,?,?,?)");
+            st.setString(1, os.getListaItens());
+            st.setString(2, os.getInicio());
+            st.setString(3, os.getDestino());
+            st.setDouble(4, os.getDistancia());
+            st.setString(5, os.getVfcombust());
+            st.setString(6, os.getDuracao());
+            st.setDouble(7, os.getValorhora());
+            st.setDouble(8, os.getValortotal());
+            st.setString(9, os.getPlaca());
+            st.setString(10, os.getCpf_cnpj());
+
+            int rowsAffected = st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -107,7 +133,7 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
         
     }
     
-        private OrdemDeServico instanciaOrdemDeServico(ResultSet rs) throws SQLException  {
+    private OrdemDeServico instanciaOrdemDeServico(ResultSet rs) throws SQLException  {
         OrdemDeServico os =new OrdemDeServico();
         
        

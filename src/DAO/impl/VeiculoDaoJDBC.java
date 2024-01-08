@@ -32,8 +32,26 @@ public class VeiculoDaoJDBC implements VeiculoDao{
     
     
     @Override
-    public void insert(Veiculo obj) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Integer insert(Veiculo veic) {
+        
+        PreparedStatement st = null;
+        int rowsAffected = 0;
+        try {
+            
+            st = conn.prepareStatement(
+                    "INSERT INTO veiculo"
+                    + "(placa,kilometragem,consumo)"
+                    + "VALUES"
+                    + "(?,?,?)");
+            st.setString(1, veic.getPlaca());
+            st.setDouble(2, veic.getKilometragem());
+            st.setDouble(3, veic.getConsumo());
+
+            rowsAffected = st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowsAffected;
     }
 
     @Override
