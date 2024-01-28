@@ -344,16 +344,10 @@ public class OrdemDeServico implements Serializable{
                     break;
                 case 9 :
                     
-                   
-                    Double kilometragem = (long)distancia + veiculolist
-                            .get(veicindex)
-                            .getKilometragem();
-                    
-                    // Atualiza a kilometragem do veiculo utilizado no serviço
-                    veiculolist.get(veicindex)
-                            .setKilometragem(kilometragem) ;
-                    
-                    
+                    // Atualiza a kilometragem do veiculo utilizado no serviço 
+                    Double kilometragem = (long)distancia + veiculo.getKilometragem();                    
+                    veiculo.setKilometragem(kilometragem) ;
+                    veiculolist.clear();
                     //Reorganiza listaItens com ',' 
                     listaItens = "";
                     for (String item : itens) {

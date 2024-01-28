@@ -35,9 +35,7 @@ public class CalcTempo {
     }
     public double calcValorHora(double valorhora){
         return valorhora*horaminuto;      
-    }
-    
-    
+    }    
     public int calcNasc(String nasc){
         String agora = "";
         DateTimeFormatter fm1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");

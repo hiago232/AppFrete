@@ -29,7 +29,7 @@ import java.util.Formatter;
 public class aplicacao {
     public static String t = "Tela Inicial";
     
-    public static void main(String[] args) {
+    public static void main(String[] args)    {
         String cpf = "";
         int index = 0;
         String nome = "";
@@ -61,87 +61,116 @@ public class aplicacao {
         while(sair){
             op = menu();
             switch (op) {
-                case 1 :
+                case 1:
+                    op = Integer.parseInt(JOptionPane
+                            .showInputDialog(null,
+                                     "1 - Nova OS\n 2 - Serviços Finalizados\n 3 - Voltar", t,
+                                     3));
+                    switch(op){
+                        case 1:
+                            op = Integer.parseInt(JOptionPane
+                                    .showInputDialog(null,
+                                             "1 - Cliente\n 2 - Avulso\n", t,
+                                             3));
+                            if (op == 1) {
+                                cpf = JOptionPane
+                                        .showInputDialog(null,
+                                                "Insira o CPF: ",
+                                                 t,
+                                                 3);
+                                index = temCpf(clientelist, cpf);//retorna o indice
+                                if (index == -1) {
+                                    break;
+                                }
+
+                                nome = clientelist.get(index).getNome();
+                                OrdemDeServico os = new OrdemDeServico(nome, cpf);
+
+                                //Adciona veiculos à OS instanciada
+                                for (Veiculo v : veiculolist) {
+                                    os.addVeiculo(v);
+                                }
+
+                                os.menu();
+                                ordemDeServicoDao.insert(os);
+                                clientelist.get(index).addOs(os);
+
+                                //atualiza Banco de lista de OS da aplicação
+                                oslist.add(os);
+
+                                //Atualiza lista de veiculos da aplicacao
+                                veiculolist = os.getVeiculolist();
+                                break;
+                            }
+                            //Cliente Avulso
+                            nome = JOptionPane.showInputDialog(null, "Nome: ") + "(AVULSO)";
+                            cpf = JOptionPane.showInputDialog(null, "CPF/CNPJ: ");
+                            OrdemDeServico os = new OrdemDeServico(nome, cpf);
+
+                            //Adciona veiculos à OS criada
+                            for (Veiculo v : veiculolist) {
+                                os.addVeiculo(v);
+                            }
+                            os.menu();
+                            ordemDeServicoDao.insert(os);
+                            //Atualiza lista de veiculos da aplicacao
+                            veiculolist = os.getVeiculolist();
+
+                            //atualiza Banco de lista de OS na aplicação
+                            oslist.add(os);
+                            break;    
+                        case 2:
+                            // Atualiza lista
+                            oslist = ordemDeServicoDao.findAll();
+                            exibeOSList(oslist);
+                            break;
+                            
+                       default:
+                            break;
+                                }
+                        
+                    break;
+     
+                case 2 :
                     op = Integer.parseInt(JOptionPane
                             .showInputDialog(null
-                                    ,"1 - Cliente\n 2 - Avulso\n", t
-                                    , 3));
-                    if(op == 1){
-                        cpf = JOptionPane
-                                .showInputDialog(null,
-                                         "Insira o CPF: "
-                                        , t
-                                        , 3);
-                        index = temCpf(clientelist,cpf);//retorna o indice
-                        if (index == -1 ){break;}
-                          
-                        nome = clientelist.get(index).getNome();
-                        OrdemDeServico os = new OrdemDeServico(nome,cpf);
-                        
-                        //Adciona veiculos à OS instanciada
-                        for(Veiculo v : veiculolist){
-                            os.addVeiculo(v);
-                        }
-                        
-                        os.menu();
-                        ordemDeServicoDao.insert(os);
-                        clientelist.get(index).addOs(os);
-
-                        //atualiza Banco de lista de OS da aplicação
-                        
-                        oslist.add(os);
-                        
-                        //Atualiza lista de veiculos da aplicacao
-                        veiculolist = os.getVeiculolist();
-                        break;
-                    }
-                        //Cliente Avulso
-                        OrdemDeServico os = new OrdemDeServico();
-                        
-                        //Adciona veiculos à OS criada
-                        for (Veiculo v : veiculolist) {
-                        os.addVeiculo(v);
-                         }
-                        os.menu();
-                        ordemDeServicoDao.insert(os);
-                        //Atualiza lista de veiculos da aplicacao
-                        veiculolist = os.getVeiculolist();
-                     
-                        //atualiza Banco de lista de OS na aplicação
-                        oslist.add(os);
-                        break;                  
-                   
-                case 2 :
-                    // Retorna o novo cliente
-                    cliente = cadCliente(clientelist);
-                    //Atualiza lista de clientes da aplicação
-                    clientelist.add(cliente);
-
+                                    , "1.Cadastrar\n2.Alterar\n"
+                                    +"3.Exibir Lista\n4.Voltar"));
+                    switch (op){                                                            
+                        case 1 :
+                            // Retorna o novo cliente
+                            cliente = cadCliente(clientelist);
+                            //Atualiza lista de clientes da aplicação
+                            clientelist.add(cliente);                    
+                         break;
+                        case 3:
+                            exibeClienteList(clientelist);
+                            op = 2;
+                            break;
+                        default:
+                            break;
+                        }     
                     break;
-                case 3 :
-                    exibeClienteList(clientelist);
-                    
-                    break;
-                case 4 : 
+                case 3 : 
                     op = Integer.parseInt(JOptionPane.showInputDialog(null
-                            , "1 - Cadastrar\n "
+                            , " 1 - Cadastrar\n "
                                     + "2 - Alterar Dados\n "
                                     + "3 - Exibir Lista de Veículos\n"
+                                    + " 4 - Voltar"
                             , t, 3));
-                    if(op == 1){
-                        veiculolist.add(cadVeiculo());//Implementar codigo para atualizar veiculos apos cadastro
-                        
+                    switch(op){
+                        case 1:
+                            
+                        veiculolist.add(cadVeiculo());
+                        //Implementar codigo para atualizar veiculos no BD apos cadastro
                         
                         break;
-                    }
-                    if (op == 2){
+                        
+                        case 2:
                         if (veiculolist.isEmpty()) {
                             JOptionPane.showMessageDialog(null,
                                     "Nenhum Veículo Cadastrado!");
-
-                            break;}
-
-                        
+                            break;}   
                         int i = temPlaca(veiculolist,veiculoDao);
                         if (i == -1) {
                             JOptionPane.showMessageDialog(null,
@@ -149,33 +178,23 @@ public class aplicacao {
                             break;
                         }
                         veiculolist.get(i).menu();
-                        break;
-                       
-                    }
-                    if (veiculolist.isEmpty()){
-                        JOptionPane.showMessageDialog(null
-                                ,"Nenhum Veículo Cadastrado!");
-                        break;
-                    }
-                    exibeVeiculoList(veiculolist);
-                    break;       
-                case 5 : 
-                    // Atualiza lista
-                    oslist = ordemDeServicoDao.findAll();
-                    exibeOSList(oslist);
+                            break; 
+                        case 3:
+                        exibeVeiculoList(veiculolist);
+                            break;
+                        default: break;
+
             }
         }
         DB.closeConnection();
     }
+     }
     public static int menu (){
         int op = 0;
         String menu = """
-                      1 - Abrir Ordem de Servi\u00e7o
-                      2 - Cadastrar Cliente
-                      3 - Exibir Lista de Clientes
-                      4 - Veículo
-                      5 - Serviços Realizados
-                      6 - Sair
+                      1 - Ordem de Serviço
+                      2 - Cliente
+                      3 - Veículo
                       """;
         op = Integer.parseInt(JOptionPane.showInputDialog(null
                 , menu, t, 3));

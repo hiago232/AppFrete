@@ -15,23 +15,22 @@ import util.CalcTempo;
  *
  * @author Usuário
  */
-public class Cliente implements Serializable {
+public abstract class Cliente implements Serializable {
     // Declaração de variáveis
     public String t = "Cliente";
-    private String nome,endereco,email,nasc;
-    public int idade = 0;
-    private String cpf_cnpj= "";
-    private long cep = 0;
-    private long cel = 0;
+    protected String endereco,email;
+
+    protected long cep = 0;
+    protected long cel = 0;
     boolean sair = true;
-    private List <OrdemDeServico> oslist; // lista de ordens de serviço
+    protected List <OrdemDeServico> oslist; // lista de ordens de serviço
     
     //Implementar menu #em processo de construção
-    private String menu =  "";
+    protected String menu =  "";
      
     
     
-    //Contrutores
+    /**Contrutores
     public Cliente (){
         List<OrdemDeServico> osl = new ArrayList<>();
         this.oslist = osl;
@@ -73,20 +72,7 @@ public class Cliente implements Serializable {
     
     }
 
-    /**
-     * @return the nome
-     */
-    public String getNome() {
-        return nome;
-    }
-
-    /**
-     * @param nome the nome to set
-     */
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
+*/
     /**
      * @return the endereco
      */
@@ -116,20 +102,6 @@ public class Cliente implements Serializable {
     }
 
     /**
-     * @return the cpf_cnpj
-     */
-    public String getCpf_cnpj() {
-        return cpf_cnpj;
-    }
-
-    /**
-     * @param cpf_cnpj the cpf_cnpj to set
-     */
-    public void setCpf_cnpj(String cpf_cnpj) {
-        this.cpf_cnpj = cpf_cnpj;
-    }
-
-    /**
      * @return the cep
      */
     public long getCep() {
@@ -156,12 +128,6 @@ public class Cliente implements Serializable {
     public void setCel(long cel) {
         this.cel = cel;
     }
-    public String getNasc(){
-        return nasc;
-    }
-    public void setNasc(String nasc){
-        this.nasc = nasc;
-    }
 
     /**
      * @return the oslist
@@ -177,28 +143,7 @@ public class Cliente implements Serializable {
         this.oslist = oslist;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 83 * hash + Objects.hashCode(this.cpf_cnpj);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Cliente other = (Cliente) obj;
-        return Objects.equals(this.cpf_cnpj, other.cpf_cnpj);
-    }
-    
+   
     
     
     public void menu (){
@@ -230,19 +175,6 @@ public class Cliente implements Serializable {
         oslist.add(osobj);
     }
    
-    public String toString (){
-        return "----------------" + "\n"
-                +"Nome: "+ nome + "\n"
-                +"Data de nascimento: "+nasc+"\n"
-                +"Idade: "+idade+"\n"
-                +"Endereço: "+ endereco + "\n"
-                +"CPF: "+ cpf_cnpj + "\n"
-                +"CEP: "+ cep + "\n"
-                +"Celular: "+ cel + "\n"
-                +"E-mail: "+ email + "\n"
-                +"Serviços:"+oslist.size()+ "\n"
-                +"----------------" + "\n";
-
-                }
+    public abstract String toString ();
     
 }
