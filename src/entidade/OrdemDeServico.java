@@ -25,8 +25,9 @@ import java.util.Objects;
  * @author Usuário
  */
 public class OrdemDeServico implements Serializable{
-    private String cpf_cnpj= "";
-    private String nome = "";
+    private Integer id;
+    private String FKcpf_cnpj= "";
+    private String nomeCliente = "";
     private String placa = "";
     private String vfcombust = "";
     private String t = "|Ordem de Serviço|";
@@ -37,7 +38,6 @@ public class OrdemDeServico implements Serializable{
     private String moveis = "";
     private String inicio = "";
     private String destino = "";
-    private Integer id;
     private int veicindex = 0;
     private double vhorareal = 0;
     private double valorhora = 0;
@@ -54,24 +54,24 @@ public class OrdemDeServico implements Serializable{
     
     public OrdemDeServico(String nome, String cpf_cnpj){
        
-        this.cpf_cnpj = cpf_cnpj;
-        this.nome = nome;
+        this.FKcpf_cnpj = cpf_cnpj;
+        this.nomeCliente = nome;
     };
 
-    public String getCpf_cnpj() {
-        return cpf_cnpj;
+    public String getFKcpf_cnpj() {
+        return FKcpf_cnpj;
     }
 
-    public void setCpf_cnpj(String cpf_cnpj) {
-        this.cpf_cnpj = cpf_cnpj;
+    public void setFKcpf_cnpj(String FKcpf_cnpj) {
+        this.FKcpf_cnpj = FKcpf_cnpj;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNomeCliente() {
+        return nomeCliente;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
     }
 
     public Veiculo getVeiculo() {
@@ -163,6 +163,14 @@ public class OrdemDeServico implements Serializable{
         this.valortotal = valortotal;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -196,8 +204,8 @@ public class OrdemDeServico implements Serializable{
         CalcCombustivel conscombust = new CalcCombustivel();
         DecimalFormat formatador = new DecimalFormat("#.###");
       
-        if (nome.equals("")) {
-            nome = "avulso";
+        if (nomeCliente.equals("")) {
+            nomeCliente = "avulso";
         }
         
         boolean sair = true;
@@ -206,7 +214,7 @@ public class OrdemDeServico implements Serializable{
         while (sair){
             // Atribui o valor total a cada repetição
             valortotal = vcombust + valorhora; 
-            String osmenu = "Cliente: "+nome.toUpperCase()+"\n"
+            String osmenu = "Cliente: "+nomeCliente.toUpperCase()+"\n"
                 +"1 - Add item\n"
                 +"2 - Exibir lista\n"
                 +"3 - Local inicial:   "+inicio+"\n"
@@ -410,8 +418,8 @@ public class OrdemDeServico implements Serializable{
     }
     public String toString(){
         return 
-        "Nome: "+ nome+"\n"
-        +"CPF\"CNPJ: "+cpf_cnpj+"\n"
+        "Nome: "+ nomeCliente+"\n"
+        +"CPF\"CNPJ: "+FKcpf_cnpj+"\n"
         +"Lista de Itens: "+listaItens+"\n"
         +"Inicio: "+inicio+"\n"
         +"Destino: "+destino+"\n"

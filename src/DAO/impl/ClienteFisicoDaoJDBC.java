@@ -4,14 +4,12 @@
  */
 package DAO.impl;
 
-import DAO.ClienteDao;
 import DAO.DaoFactory;
 import DAO.OrdemDeServicoDao;
 import Db.DB;
 import Db.DbException;
-import entidade.Cliente;
-import entidade.OrdemDeServico;
-import entidade.Veiculo;
+
+import entidade.ClienteFisico;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,41 +17,43 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import DAO.ClienteFisicoDao;
 
 /**
  *
  * @author Usuário
  */
-public class ClienteDaoJDBC implements ClienteDao{
+public class ClienteFisicoDaoJDBC implements ClienteFisicoDao{
     
     private Connection conn;
     
-    public ClienteDaoJDBC (Connection conn){
+    public ClienteFisicoDaoJDBC (Connection conn){
         this.conn = conn;
     }
 
     @Override
-    public Integer insert(Cliente cliente) {
+    public Integer insert(ClienteFisico cliente) {
         Connection conn = null;
         PreparedStatement st = null;
         int rowsAffected = 0;
         try {
             conn = DB.getConnection();
             st = conn.prepareStatement(
-                    "INSERT INTO cliente"
-                    + "(nome,endereco,data_nasc,cpf_cnpj,cep,cel,email)"
+                    "INSERT INTO cliente_fisico"
+                    + "(cpf,nome,data_nasc,email,cel,cep,rua,numero,bairro,cidade,estado)"
                     + "VALUES"
-                    + "(?,?,?,?,?,?,?)");
-            st.setString(1, cliente.getNome());
-            st.setString(2, cliente.getEndereco());
+                    + "(?,?,?,?,?,?,?,?,?,?,?)");
+            st.setString(1, cliente.getCpf());
+            st.setString(2, cliente.getNome());
             st.setString(3, cliente.getNasc());
-            st.setString(4, cliente.getCpf_cnpj());
-
-            st.setLong(5, cliente.getCep());
-            st.setLong(6, cliente.getCel());
-            st.setString(7, cliente.getEmail());
+            st.setString(4, cliente.getEmail());
+            st.setLong(5, cliente.getCel());
+            st.setLong(6, cliente.getCep());
+            st.setString(7, cliente.getRua());
+            st.setInt(8, cliente.getNumero());
+            st.setString(9, cliente.getBairro());
+            st.setString(10, cliente.getCidade());
+            st.setString(11, cliente.getEstado());
 
             rowsAffected = st.executeUpdate();
         } catch (SQLException e) {
@@ -65,28 +65,28 @@ public class ClienteDaoJDBC implements ClienteDao{
     }
 
     @Override
-    public void update(Cliente obj) {
+    public void update(ClienteFisico obj) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void deleteByCpf_Cnpj(String cpf_cnpj) {
+    public void deleteByPK(String cpf) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Cliente findByCpf_Cnpj(String cpf_cnpj) {
+    public ClienteFisico findByPK(String cpf) {
         
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
             st = conn.prepareStatement(
-                    "select * from cliente "
-                            + "where cpf_cnpj = ?");
-            st.setString(1, cpf_cnpj);
+                    "select * from cliente_fisico "
+                            + "where cpf = ?");
+            st.setString(1, cpf);
             rs = st.executeQuery();
             if (rs.next()){
-                Cliente cliente= instanciaCliente(rs);;
+                ClienteFisico cliente= instanciaCliente(rs);;
                 return cliente;
             }
             return null;
@@ -101,9 +101,9 @@ public class ClienteDaoJDBC implements ClienteDao{
     }
 
     @Override
-    public List<Cliente> findAll() {
+    public List<ClienteFisico> findAll() {
         
-        List<Cliente> clienteList = new ArrayList<>();
+        List<ClienteFisico> clienteList = new ArrayList<>();
 
         Statement st = null;
         ResultSet rs = null;
@@ -111,10 +111,10 @@ public class ClienteDaoJDBC implements ClienteDao{
             st = conn.createStatement();
 
             rs = st.executeQuery("select  * \n"
-                    + "from  cliente");
+                    + "from  cliente_fisico");
 
             while (rs.next()) {
-                Cliente cliente = instanciaCliente(rs);      
+                ClienteFisico cliente = instanciaCliente(rs);      
                 clienteList.add(cliente);
             }
             return clienteList;
@@ -125,28 +125,31 @@ public class ClienteDaoJDBC implements ClienteDao{
             DB.closeStatement(st);
         }
     }
-
-    private Cliente instanciaCliente(ResultSet rs) throws SQLException{
-        String cpf_cnpj = "";
-        String fk_cpf_cnpj="";
+    @Override
+    public ClienteFisico instanciaCliente(ResultSet rs) throws SQLException{
+        String cpf = "";
+        String fk_cpf="";
         OrdemDeServicoDao osDao = DaoFactory.criaOrdemDeServicoDao();
 
 
-            Cliente cliente = new Cliente();
-            fk_cpf_cnpj = rs.getString("cpf_cnpj");
-            if (rs.getString("cpf_cnpj").length() < 11) {
-                cpf_cnpj = "0" + rs.getString("cpf_cnpj");
+            ClienteFisico cliente = new ClienteFisico();
+            fk_cpf = rs.getString("cpf");
+            if (rs.getString("cpf").length() < 11) {
+                cpf = "0" + rs.getString("cpf");
                 }else {
-                cpf_cnpj = rs.getString("cpf_cnpj");}
-            
+                cpf = rs.getString("cpf");}
+            cliente.setCpf(cpf);
             cliente.setNome(rs.getString("nome"));
-            cliente.setCpf_cnpj(cpf_cnpj);
-            cliente.setEmail(rs.getString("email"));
-            cliente.setCep(rs.getLong("cep"));
             cliente.setNasc((String) rs.getString("data_nasc"));
-            cliente.setEndereco(rs.getString("endereco"));
+            cliente.setEmail(rs.getString("email"));
             cliente.setCel(rs.getLong("cel"));  
-            cliente.setOslist(osDao.findByFkCpfCnpj(fk_cpf_cnpj));
+            cliente.setCep(rs.getLong("cep"));
+            cliente.setRua(rs.getString("rua"));
+            cliente.setNumero(rs.getInt("numero"));
+            cliente.setBairro(rs.getString("bairro"));
+            cliente.setCidade(rs.getString("cidade"));
+            cliente.setEstado(rs.getString("estado"));
+            cliente.setOslist(osDao.findByFkCpf(fk_cpf));
             return cliente;
 
 

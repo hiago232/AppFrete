@@ -18,8 +18,8 @@ import util.CalcTempo;
 public abstract class Cliente implements Serializable {
     // Declaração de variáveis
     public String t = "Cliente";
-    protected String endereco,email;
-
+    protected String estado,cidade,bairro,rua,email;
+    protected int numero= 0 ;
     protected long cep = 0;
     protected long cel = 0;
     boolean sair = true;
@@ -73,18 +73,44 @@ public abstract class Cliente implements Serializable {
     }
 
 */
-    /**
-     * @return the endereco
-     */
-    public String getEndereco() {
-        return endereco;
+        public String getEstado() {
+        return estado;
     }
 
-    /**
-     * @param endereco the endereco to set
-     */
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getRua() {
+        return rua;
+    }
+
+    public void setRua(String rua) {
+        this.rua = rua;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 
     /**

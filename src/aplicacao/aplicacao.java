@@ -3,25 +3,20 @@
  */
 
 package aplicacao;
-import DAO.ClienteDao;
 import DAO.DaoFactory;
 import DAO.OrdemDeServicoDao;
 import DAO.VeiculoDao;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import Db.DB;
 import entidade.OrdemDeServico;
-import entidade.Cliente;
 import entidade.Veiculo;
 import java.awt.Dimension;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Formatter;
+import DAO.ClienteFisicoDao;
+import DAO.ClienteJuridicoDao;
+import entidade.ClienteFisico;
+import entidade.ClienteJuridico;
 /**
  *
  * @author Usuário
@@ -30,23 +25,29 @@ public class aplicacao {
     public static String t = "Tela Inicial";
     
     public static void main(String[] args)    {
+        String cpf_cnpj = "";
         String cpf = "";
+        String cnpj = "";
         int index = 0;
         String nome = "";
         boolean sair = true;
         int op = 0;
         String placa = "";
         
-        Cliente cliente = new Cliente();
+        ClienteFisico clienteFisico = new ClienteFisico();
+        ClienteJuridico clienteJuridico = new ClienteJuridico();
         
-        List<Cliente> clientelist = new ArrayList<>();
+        List<ClienteFisico> clienteFisicoList = new ArrayList<>();
+        List<ClienteJuridico> clienteJuridicoList = new ArrayList<>();
         List<OrdemDeServico> oslist = new ArrayList<>();
         List<Veiculo> veiculolist = new ArrayList<>();
         
-        // Importa Tabela Cliente do MySql
+        // Importa  Clientes do MySql
 
-        ClienteDao clienteDao = DaoFactory.criaClienteDao();
-        clientelist = clienteDao.findAll();
+        ClienteFisicoDao clienteFisicoDao = DaoFactory.criaClienteFisicoDao();
+        ClienteJuridicoDao clienteJuridicoDao = DaoFactory.criaClienteJuridicoDao();
+        clienteFisicoList = clienteFisicoDao.findAll();
+        clienteJuridicoList = clienteJuridicoDao.findAll();
 
 
         // Importa Tabela ordem_servico do MySql
@@ -63,28 +64,34 @@ public class aplicacao {
             switch (op) {
                 case 1:
                     op = Integer.parseInt(JOptionPane
-                            .showInputDialog(null,
-                                     "1 - Nova OS\n 2 - Serviços Finalizados\n 3 - Voltar", t,
-                                     3));
+                        .showInputDialog(null, """
+                                               1 - Nova OS
+                                                2 - Servi\u00e7os Finalizados
+                                                3 - Voltar""", t,
+                                 3));
                     switch(op){
                         case 1:
                             op = Integer.parseInt(JOptionPane
-                                    .showInputDialog(null,
-                                             "1 - Cliente\n 2 - Avulso\n", t,
-                                             3));
+                                .showInputDialog(null, """
+                                                       1 - Cliente Fisico
+                                                       2 - Cliente Jur\u00eddico
+                                                       3 - Avulso
+                                                       """, t,
+                                         3));
                             if (op == 1) {
                                 cpf = JOptionPane
                                         .showInputDialog(null,
                                                 "Insira o CPF: ",
                                                  t,
                                                  3);
-                                index = temCpf(clientelist, cpf);//retorna o indice
+                                index = temCpf(clienteFisicoList, cpf);//retorna o indice
                                 if (index == -1) {
                                     break;
                                 }
 
-                                nome = clientelist.get(index).getNome();
-                                OrdemDeServico os = new OrdemDeServico(nome, cpf);
+                                nome = clienteFisicoList.get(index).getNome();
+                                OrdemDeServico os = new OrdemDeServico(nome, 
+                                        cpf);
 
                                 //Adciona veiculos à OS instanciada
                                 for (Veiculo v : veiculolist) {
@@ -93,7 +100,37 @@ public class aplicacao {
 
                                 os.menu();
                                 ordemDeServicoDao.insert(os);
-                                clientelist.get(index).addOs(os);
+                                clienteFisicoList.get(index).addOs(os);
+
+                                //atualiza Banco de lista de OS da aplicação
+                                oslist.add(os);
+
+                                //Atualiza lista de veiculos da aplicacao
+                                veiculolist = os.getVeiculolist();
+                                break;
+                            }
+                            if (op == 2) {
+                                cnpj = JOptionPane
+                                        .showInputDialog(null,
+                                                "Insira o CNPJ: ",
+                                                 t,
+                                                 3);
+                                index = temCnpj(clienteJuridicoList, cnpj);//retorna o indice
+                                if (index == -1) {
+                                    break;
+                                }
+
+                                nome = clienteJuridicoList.get(index).getResponsavel();
+                                OrdemDeServico os = new OrdemDeServico(nome, cnpj);
+
+                                //Adciona veiculos à OS instanciada
+                                for (Veiculo v : veiculolist) {
+                                    os.addVeiculo(v);
+                                }
+
+                                os.menu();
+                                ordemDeServicoDao.insert(os);
+                                clienteFisicoList.get(index).addOs(os);
 
                                 //atualiza Banco de lista de OS da aplicação
                                 oslist.add(os);
@@ -103,9 +140,11 @@ public class aplicacao {
                                 break;
                             }
                             //Cliente Avulso
-                            nome = JOptionPane.showInputDialog(null, "Nome: ") + "(AVULSO)";
-                            cpf = JOptionPane.showInputDialog(null, "CPF/CNPJ: ");
-                            OrdemDeServico os = new OrdemDeServico(nome, cpf);
+                            nome = JOptionPane.showInputDialog(null,
+                                    "Nome: ") + "(AVULSO)";
+                            cpf_cnpj = JOptionPane.showInputDialog(null,
+                                    "CPF/CNPJ: ");
+                            OrdemDeServico os = new OrdemDeServico(nome,cpf_cnpj);
 
                             //Adciona veiculos à OS criada
                             for (Veiculo v : veiculolist) {
@@ -119,6 +158,7 @@ public class aplicacao {
                             //atualiza Banco de lista de OS na aplicação
                             oslist.add(os);
                             break;    
+    
                         case 2:
                             // Atualiza lista
                             oslist = ordemDeServicoDao.findAll();
@@ -138,14 +178,30 @@ public class aplicacao {
                                     +"3.Exibir Lista\n4.Voltar"));
                     switch (op){                                                            
                         case 1 :
-                            // Retorna o novo cliente
-                            cliente = cadCliente(clientelist);
-                            //Atualiza lista de clientes da aplicação
-                            clientelist.add(cliente);                    
+                            op = Integer.parseInt(JOptionPane
+                                    .showInputDialog(null,
+                                             "1.Cliente Fisico\n"
+                                                     + "2.Cliente Jurídico\n"));
+                            switch (op){
+                                case 1:
+                                    // Retorna o novo cliente
+                                    clienteFisico =
+                                        cadClienteFisico(clienteFisicoList);
+                                    //Atualiza lista de clientes da aplicação
+                                    clienteFisicoList.add(clienteFisico); 
+                                    break;
+                                case 2:
+                                    // Retorna o novo cliente
+                                    clienteJuridico = 
+                                        cadClienteJuridico(clienteJuridicoList);
+                                    //Atualiza lista de clientes da aplicação
+                                    clienteJuridicoList.add(clienteJuridico); 
+                                    break;
+                            }                  
                          break;
                         case 3:
-                            exibeClienteList(clientelist);
-                            op = 2;
+                            exibeClienteList(clienteFisicoList,clienteJuridicoList);
+                            
                             break;
                         default:
                             break;
@@ -186,8 +242,9 @@ public class aplicacao {
 
             }
         }
-        DB.closeConnection();
+        
     }
+        DB.closeConnection();
      }
     public static int menu (){
         int op = 0;
@@ -200,43 +257,68 @@ public class aplicacao {
                 , menu, t, 3));
         return op;
     } 
-    public static Cliente cadCliente(List<Cliente>clientelist){
-        ClienteDao clienteDao = DaoFactory.criaClienteDao();
+    public static ClienteFisico cadClienteFisico(List<ClienteFisico>clienteFisicoList){
+        ClienteFisicoDao clienteFisicoDao = DaoFactory.criaClienteFisicoDao();
         
-         String nome , endereco, email;
+         String nome = "";
+         String rua = "";
+         String bairro = "";
+         String cidade = "";
+         String estado = "";
+         String email = "";
          String t = "Novo Cliente";
          String nasc = "";
-         String cpf_cnpj ;
-         int cep = 0;
+         String cpf ="";
          long cel = 0;
-         //Data de nascimento
+         long cep = 0;
+         int numero = 0;
+        
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
-         cpf_cnpj = JOptionPane.showInputDialog(null,
+         cpf = JOptionPane.showInputDialog(null,
                  "CPF: ",
                 t, 3);
          nasc = JOptionPane.showInputDialog(null,
                  "Data de Nascimento: ",
                 t, 3);         
          
-         endereco = JOptionPane.showInputDialog(null
-                 , "Endereço: ",
-                 t, 3);
-         
          email = JOptionPane.showInputDialog(null
                  , "E-mail: ",
                  t, 3);
 
-         cep = Integer.parseInt(JOptionPane.showInputDialog(null
-                 , "CEP: ",
-                 t, 3));
          cel= Long.parseLong(JOptionPane.showInputDialog(null
                  , "Cel: ",
                  t, 3));
+         cep = Long.parseLong(JOptionPane.showInputDialog(null
+                 , "CEP: ",
+                 t, 3));
+         numero = Integer.parseInt(JOptionPane.showInputDialog(null
+                 , "Número: ",
+                 t, 3));
              
-         Cliente cliente = new Cliente(nome,endereco,nasc,cpf_cnpj,cep,cel,email);
-        int rowsAffected = clienteDao
-                .insert(cliente);
+         rua = JOptionPane.showInputDialog(null
+                 , "Rua: ",
+                 t, 3);
+         
+         
+         bairro = JOptionPane.showInputDialog(null
+                 , "Bairro: ",
+                 t, 3);
+         
+         
+         cidade = JOptionPane.showInputDialog(null
+                 , "Cidade: ",
+                 t, 3);
+         
+         
+         estado = JOptionPane.showInputDialog(null
+                 , "Estado: ",
+                 t, 3);
+         
+         ClienteFisico clienteFisico = new ClienteFisico(cpf,nome,nasc,email,cel,cep,
+                 rua,numero,bairro,cidade,estado);
+         
+        int rowsAffected = clienteFisicoDao.insert(clienteFisico);
         if (rowsAffected > 0) {
             JOptionPane
                     .showMessageDialog(null,
@@ -247,16 +329,91 @@ public class aplicacao {
                             "Falha ao Cadastrar!");
         }
 
-         return cliente;
+         return clienteFisico;
     }
-    public static void exibeClienteList(List<Cliente>clientelist){
+    public static ClienteJuridico cadClienteJuridico(List<ClienteJuridico>clienteJuridicoList){
+        ClienteJuridicoDao clienteJuridicoDao = DaoFactory.criaClienteJuridicoDao();
+        
+         String responsavel,razaoSocial,nomeFantasia,rua,bairro,cidade,estado, email;
+         String t = "Novo Cliente";
+         String cnpj;
+         long cel = 0;
+         long cep = 0;
+         int numero = 0;
+         //Data de nascimento
+         cnpj = JOptionPane.showInputDialog(null,
+                 "CNPJ: ",
+                t, 3);
+         responsavel = JOptionPane.showInputDialog(null, "Responsavel: "
+                 , t, 3);
+         razaoSocial = JOptionPane.showInputDialog(null,
+                 "Razao Social: ",
+                t, 3);         
+         nomeFantasia = JOptionPane.showInputDialog(null,
+                 "Nome Fantasia: ",
+                t, 3);         
+         
+         email = JOptionPane.showInputDialog(null
+                 , "E-mail: ",
+                 t, 3);
+
+         cel= Long.parseLong(JOptionPane.showInputDialog(null
+                 , "Cel: ",
+                 t, 3));
+         cep = Integer.parseInt(JOptionPane.showInputDialog(null
+                 , "CEP: ",
+                 t, 3));
+         numero = Integer.parseInt(JOptionPane.showInputDialog(null
+                 , "Número: ",
+                 t, 3));
+             
+         rua = JOptionPane.showInputDialog(null
+                 , "Rua: ",
+                 t, 3);
+         
+         
+         bairro = JOptionPane.showInputDialog(null
+                 , "Bairro: ",
+                 t, 3);
+         
+         
+         cidade = JOptionPane.showInputDialog(null
+                 , "Cidade: ",
+                 t, 3);
+         
+         
+         estado = JOptionPane.showInputDialog(null
+                 , "Estado: ",
+                 t, 3);
+         
+         ClienteJuridico clienteJuridico = new ClienteJuridico(cnpj,responsavel,
+         razaoSocial,nomeFantasia,email,cel,cep,rua,numero,bairro,cidade,estado);
+        int rowsAffected = clienteJuridicoDao.insert(clienteJuridico);
+        if (rowsAffected > 0) {
+            JOptionPane
+                    .showMessageDialog(null,
+                             "Cliente Cadastrado!");
+        } else {
+            JOptionPane
+                    .showMessageDialog(null,
+                            "Falha ao Cadastrar!");
+        }
+
+         return clienteJuridico;
+    }    
+    public static void exibeClienteList(List<ClienteFisico>clienteFisicoList,List<ClienteJuridico>clienteJuridicoList){
         String lista = "";
         
-        for(Cliente cliente : clientelist){
+        for(ClienteFisico clienteFisico : clienteFisicoList){
             
-            lista = lista +  cliente.toString();
+            lista = lista +  clienteFisico.toString();
         }
-        lista+= clientelist.size();
+        lista += clienteFisicoList.size();
+        for(ClienteJuridico clienteJuridico : clienteJuridicoList){
+            
+            lista = lista +  clienteJuridico.toString();
+        }
+        lista+= clienteJuridicoList.size();
         JTextArea clientetxt = new JTextArea(lista);
         clientetxt.setLineWrap(true);
         clientetxt.setWrapStyleWord(true);
@@ -269,10 +426,19 @@ public class aplicacao {
         
 
     }
-    public static int temCpf(List<Cliente> clientelist,String cpf){
+    public static int temCpf(List<ClienteFisico> clienteFisicoList,String cpf){
         int i = 0;
-        for (i = 0; i < clientelist.size(); i++) {
-            if (clientelist.get((int) i).getCpf_cnpj().equals(cpf)) {
+        for (i = 0; i <  clienteFisicoList.size(); i++) {
+            if ( clienteFisicoList.get((int) i).getCpf().equals(cpf)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public static int temCnpj(List<ClienteJuridico> clienteJuridicoList,String cpf_cnpj){
+        int i = 0;
+        for (i = 0; i <  clienteJuridicoList.size(); i++) {
+            if ( clienteJuridicoList.get((int) i).getCnpj().equals(cpf_cnpj)) {
                 return i;
             }
         }

@@ -1,5 +1,7 @@
 package entidade;
 
+import java.io.Serializable;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -9,19 +11,32 @@ package entidade;
  *
  * @author Usuário
  */
-public class ClienteFisico extends Cliente{
-    public int idade = 0;
-    private String cpf = "";
-    private String nome,nasc;
+public class ClienteFisico extends Cliente implements Serializable {
     
-    public int getIdade(){
-        return idade;
+    private String cpf = "";
+    private String nome = "";
+    private String nasc = "";
+    
+    public ClienteFisico(){}
+    public ClienteFisico(String cpf,String nome,String nasc,String email,
+            long cel,long cep,String rua,int numero,String bairro,String cidade,
+            String estado){
+        this.cpf = cpf  ;
+        this.nome = nome;
+        this.nasc = nasc;
+        this.email = email;
+        this.cel = cel;
+        this.cep = cep;
+        this.rua = rua;
+        this.numero = numero;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        
     }
 
     //Getters & Setters
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
+
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
@@ -43,17 +58,22 @@ public class ClienteFisico extends Cliente{
     }
     
     public String toString (){
-     return "----------------" + "\n"
-                + "Nome: " + nome + "\n"
-                + "Data de nascimento: " + nasc + "\n"
-                + "Idade: " + idade + "\n"
-                + "Endereço: " + endereco + "\n"
-                + "CPF: " + cpf + "\n"
-                + "CEP: " + cep + "\n"
-                + "Celular: " + cel + "\n"
-                + "E-mail: " + email + "\n"
-                + "Serviços:" + oslist.size() + "\n"
-                + "----------------" + "\n";
-
+        StringBuilder sb =  new StringBuilder();
+        sb.append("----------------" + "\n");
+        sb.append("Nome: " + nome + "\n");
+        sb.append("CPF: " + cpf + "\n");
+        sb.append("Data de nascimento: " + nasc + "\n");
+        sb.append("E-mail: " + email + "\n");
+        sb.append("Celular: " + cel + "\n");
+        sb.append("CEP: " + cep + "\n");
+        sb.append("CEP: " + rua + "\n");
+        sb.append("CEP: " + numero + "\n");
+        sb.append("CEP: " + bairro + "\n");
+        sb.append("CEP: " + cidade + "\n");
+        sb.append("CEP: " + estado + "\n");
+        sb.append("Serviços:" + oslist.size() + "\n");
+        sb.append("----------------" + "\n");
+     return sb.toString();
+                
     }
 }

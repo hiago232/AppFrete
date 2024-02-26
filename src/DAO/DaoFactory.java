@@ -5,7 +5,9 @@
 package DAO;
 
 import DAO.impl.VeiculoDaoJDBC;
-import DAO.impl.ClienteDaoJDBC;
+
+import DAO.impl.ClienteFisicoDaoJDBC;
+import DAO.impl.ClienteJuridicoDaoJDBC;
 import DAO.impl.OrdemDeServicoDaoJDBC;
 import Db.DB;
 
@@ -14,8 +16,11 @@ import Db.DB;
  * @author Usuário
  */
 public class DaoFactory {
-    public static ClienteDao criaClienteDao(){
-        return new ClienteDaoJDBC(DB.getConnection());
+    public static ClienteFisicoDao criaClienteFisicoDao(){
+        return new ClienteFisicoDaoJDBC(DB.getConnection());
+    }
+    public static ClienteJuridicoDao criaClienteJuridicoDao(){
+        return new ClienteJuridicoDaoJDBC(DB.getConnection());
     }
     public static VeiculoDao criaVeiculoDao() {
         return new VeiculoDaoJDBC(DB.getConnection());

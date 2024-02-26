@@ -40,21 +40,22 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
             
             st = conn.prepareStatement(
                     "INSERT INTO ordem_servico"
-                    + "(lista_itens,inicio,destino,distancia"
-                    + ",combustivel$,tempo_servico"
+                    + "(id,lista_itens,inicio,destino,distancia"
+                    + ",tempo_servico,combustivel$"
                     + ",valor_hora,valor_total,fk_placa,fk_cpf_cnpj)"
                     + "VALUES"
                     + "(?,?,?,?,?,?,?,?,?,?)");
-            st.setString(1, os.getListaItens());
-            st.setString(2, os.getInicio());
-            st.setString(3, os.getDestino());
-            st.setDouble(4, os.getDistancia());
-            st.setString(5, os.getVfcombust());
+            st.setInt(1, os.getId());
+            st.setString(2, os.getListaItens());
+            st.setString(3, os.getInicio());
+            st.setString(4, os.getDestino());
+            st.setDouble(5, os.getDistancia());
             st.setString(6, os.getDuracao());
-            st.setDouble(7, os.getValorhora());
-            st.setDouble(8, os.getValortotal());
-            st.setString(9, os.getPlaca());
-            st.setString(10, os.getCpf_cnpj());
+            st.setString(7, os.getVfcombust());
+            st.setDouble(8, os.getValorhora());
+            st.setDouble(9, os.getValortotal());
+            st.setString(10, os.getPlaca());
+            st.setString(11, os.getFKcpf_cnpj());
 
             int rowsAffected = st.executeUpdate();
         } catch (SQLException e) {
@@ -74,7 +75,7 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
     }
 
     @Override
-    public List<OrdemDeServico> findByFkCpfCnpj(String fkCpfCnpj) {
+    public List<OrdemDeServico> findByFkCpf(String fkCpf) {
         List<OrdemDeServico> osList = new ArrayList<>();
         PreparedStatement st = null;
         ResultSet rs = null;
@@ -82,10 +83,10 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
             st = conn.prepareStatement(
                     "select  * \n"
                     + "from  ordem_servico as os join  "
-                    + "(select c.nome, c.cpf_cnpj from cliente as c) as c\n"
-                    + "on (os.fk_cpf_cnpj = c.cpf_cnpj  ) "
-                     + "where fk_cpf_cnpj = ?");
-            st.setString(1, fkCpfCnpj);
+                    + "(select c.nome as nome_cliente, c.cpf as fk_cpf_cnpj from cliente_fisico as c) as cf\n"
+                    + "on (os.fk_ClienteFisico_cpf = cf.fk_cpf_cnpj ) "
+                     + "where os.fk_ClienteFisico_cpf = ?");
+            st.setString(1, fkCpf);
             rs = st.executeQuery();
             while (rs.next()){
                 OrdemDeServico os = instanciaOrdemDeServico(rs);;
@@ -103,6 +104,34 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
         
     }
 
+    public List<OrdemDeServico> findByFkCnpj(String fkCnpj) {
+        List<OrdemDeServico> osList = new ArrayList<>();
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try{
+            st = conn.prepareStatement(
+                    "select  * \n"
+                    + "from  ordem_servico as os join  "
+                    + "(select cj.responsavel, cj.cnpj as fk_cpf_cnpj from cliente_juridico as cj) as cj\n "
+                    + "on (os.fk_ClienteJuridico_cnpj = cj.fk_cpf_cnpj ) "
+                     + "where os.fk_ClienteJuridico_cnpj = ?");
+            st.setString(1, fkCnpj);
+            rs = st.executeQuery();
+            while (rs.next()){
+                OrdemDeServico os = instanciaOrdemDeServico(rs);;
+                osList.add(os);
+            }
+            return osList;
+        }catch(SQLException e){
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+        
+        
+    }
     @Override
     public List<OrdemDeServico> findAll() {
 
@@ -114,8 +143,9 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
 
             rs = st.executeQuery("select  * \n" 
                     +"from  ordem_servico as os join  "
-                    + "(select c.nome, c.cpf_cnpj from cliente as c) as c\n"
-                    +" on (os.fk_cpf_cnpj = c.cpf_cnpj )  order by c.nome;");
+                    + "(select c.nome as nome_cliente, c.cpf from cliente_fisico as c) as cf\n"
+                    +" on (os.fk_ClienteFisico_cpf = cf.cpf )  order by cf.nome_cliente;");
+
 
             while (rs.next()) {
                 OrdemDeServico os = instanciaOrdemDeServico(rs);
@@ -138,14 +168,23 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
         
        
             String fk_cpf_cnpj = "";
-            if (rs.getString("fk_cpf_cnpj").length() < 11) {
+            while (rs.getString("fk_cpf_cnpj").length() < 11) {
                 fk_cpf_cnpj = "0" + rs.getString("fk_cpf_cnpj");
-            } else {
-                fk_cpf_cnpj = rs.getString("fk_cpf_cnpj");
+            } 
+            
+            // Esse bloco testa se é cpf ou cnpj
+            if(rs.getString("fk_cpf_cnpj").length() <14 ) {
+                if (rs.getString("fk_cpf_cnpj").length()>11)
+                    while (rs.getString("fk_cpf_cnpj").length() < 11) {
+                        fk_cpf_cnpj = "0" + rs.getString("fk_cpf_cnpj");
+                }
+            else {
+                fk_cpf_cnpj = rs.getString("fk_cpf_cnpj");   
+             }
             }
 
-        os.setCpf_cnpj(fk_cpf_cnpj);
-        os.setNome(rs.getString("nome"));
+        os.setFKcpf_cnpj(fk_cpf_cnpj);
+        os.setNomeCliente(rs.getString("nome_cliente"));
         os.setPlaca(rs.getString("fk_placa"));
         os.setListaItens(rs.getString("lista_itens"));
         os.setInicio(rs.getString("inicio"));
@@ -156,7 +195,7 @@ public class OrdemDeServicoDaoJDBC implements OrdemDeServicoDao{
         os.setValorhora(rs.getDouble("valor_hora"));
         os.setValortotal(rs.getDouble("valor_total"));
         return os;
-    }
     
     
+            }
 }
