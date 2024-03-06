@@ -79,13 +79,38 @@ public class aplicacao {
                                                        """, t,
                                          3));
                             if (op == 1) {
+
+                                do{
                                 cpf = JOptionPane
                                         .showInputDialog(null,
                                                 "Insira o CPF: ",
                                                  t,
                                                  3);
+                                sair = false;
+                                try{
+                                Long cpfl = Long.parseLong(cpf);
+                                }catch(Exception e){
+                                    JOptionPane
+                                        .showMessageDialog(null,
+                                                "Dado inválido1");
+                                    sair = true;
+                                }
+                                
+                                if (cpf.length() < 10) {
+                                    sair = true;
+                                } else if (cpf.length() > 11) {
+                                    sair = true;
+                                 }
+                                }while(sair);
+                                
+
+                                sair = true;
+                                
                                 index = temCpf(clienteFisicoList, cpf);//retorna o indice
                                 if (index == -1) {
+                                    JOptionPane.
+                                        showMessageDialog(null,
+                                                "CPF não encontrado");
                                     break;
                                 }
 
@@ -272,52 +297,145 @@ public class aplicacao {
          long cel = 0;
          long cep = 0;
          int numero = 0;
+         int sair = 1;
         
+
          nome = JOptionPane.showInputDialog(null, "Nome: "
                  , t, 3);
+
+         do {
+
          cpf = JOptionPane.showInputDialog(null,
                  "CPF: ",
                 t, 3);
+         
+         sair = 0; 
+         if (cpf.length() <10){
+             sair = 1;
+             JOptionPane.showMessageDialog(null, "Dado inválido1");
+         }else if (cpf.length()>11){            
+             sair = 1;
+             JOptionPane.showMessageDialog(null, "Dado inválido");
+}
+
+        } while (sair == 1);
+
+
+         do {
+             try{
          nasc = JOptionPane.showInputDialog(null,
                  "Data de Nascimento: ",
                 t, 3);         
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
          
+         do {
+             try{
          email = JOptionPane.showInputDialog(null
                  , "E-mail: ",
                  t, 3);
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
 
+
+         do {
+             try{
          cel= Long.parseLong(JOptionPane.showInputDialog(null
                  , "Cel: ",
                  t, 3));
+                 sair = 0;
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
+         do {
+             try{
          cep = Long.parseLong(JOptionPane.showInputDialog(null
                  , "CEP: ",
                  t, 3));
+                 sair = 0;
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
+         do {
+             try{
          numero = Integer.parseInt(JOptionPane.showInputDialog(null
                  , "Número: ",
                  t, 3));
+                 sair = 0;
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
              
+         do {
+             try{
          rua = JOptionPane.showInputDialog(null
                  , "Rua: ",
                  t, 3);
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
          
          
+         do {
+             try{
          bairro = JOptionPane.showInputDialog(null
                  , "Bairro: ",
                  t, 3);
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
          
          
+         do {
+             try{
          cidade = JOptionPane.showInputDialog(null
                  , "Cidade: ",
                  t, 3);
+            } catch (Exception e) {
+                sair = 1;
+                JOptionPane.showMessageDialog(null, "Dado inválido");
+            }
+        } while (sair == 1);
+
          
-         
+         do {
+             try{
+
          estado = JOptionPane.showInputDialog(null
                  , "Estado: ",
                  t, 3);
-         
+         sair = 0;
+             }
+         catch(Exception e){
+             sair = 1;
+             JOptionPane.showMessageDialog(null, "Dado inválido");
+                 }
+         } while (sair == 1);
          ClienteFisico clienteFisico = new ClienteFisico(cpf,nome,nasc,email,cel,cep,
                  rua,numero,bairro,cidade,estado);
-         
+
         int rowsAffected = clienteFisicoDao.insert(clienteFisico);
         if (rowsAffected > 0) {
             JOptionPane
@@ -326,7 +444,7 @@ public class aplicacao {
         } else {
             JOptionPane
                     .showMessageDialog(null,
-                            "Falha ao Cadastrar!");
+                            "Falha ao Cadastrar! Verifique os dados inseridos");
         }
 
          return clienteFisico;
